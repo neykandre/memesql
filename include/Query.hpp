@@ -1,35 +1,25 @@
 #pragma once
 
-#include "Condition.hpp"
+#include "Definitions.hpp"
+#include "Expression/Expression.hpp"
+#include <vector>
+#include <string>
+#include <memory>
 
 namespace memesql {
 
 struct Query {
-    enum class Type {
-        SELECT,
-        INSERT,
-        UPDATE,
-        DELETE,
-        DROP
-    };
 
     struct JoinCondition {
-        enum class JoinType {
-            INNER,
-            LEFT,
-            RIGHT,
-            FULL
-        };
-
         JoinType type;
         std::string table_name;
-        std::string on_condition;
+        std::unique_ptr<Expression> on_condition;
     };
 
-    Type type;
+    QueryType type;
     std::string table_name;
     std::vector<std::string> columns_names;
-    Condition condition;
+    std::unique_ptr<Expression> where;
     std::vector<JoinCondition> joins;
 };
 } // namespace memesql

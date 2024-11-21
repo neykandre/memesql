@@ -10,19 +10,19 @@ class Record {
 
     std::map<std::string, Cell> m_cells;
 
-    explicit Record(std::map<std::string, Cell> cells) : m_cells(std::move(cells)) {};
+    explicit Record(std::map<std::string, Cell> cells);
 
   public:
+    // template <Cell_t T>
+    // const T& get(const std::string& column_name) const {
+    //     if (!m_cells.contains(column_name)) {
+    //         throw std::invalid_argument("Unknown column name");
+    //     }
 
-    template <Cell_t T>
-    const T& get(const std::string& column_name) const {
-        if (!m_cells.contains(column_name)) {
-            throw std::invalid_argument("Unknown column name");
-        }
+    //     return m_cells.at(column_name).get<T>();
+    // }
 
-        return m_cells.at(column_name).get<T>();
-    }
-
+    const Cell& operator[](const std::string& column_name) const;
 };
 
 } // namespace memesql

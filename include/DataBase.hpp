@@ -10,8 +10,6 @@ class Response;
 
 class DataBase {
   public:
-    DataBase();
-    ~DataBase();
     Response execute(const std::string& query);
 
     void load_from_file(const std::string& path);

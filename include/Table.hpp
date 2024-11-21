@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ColumnFields.hpp"
+#include "Definitions.hpp"
+#include "Cell.hpp"
 #include <list>
 #include <map>
 #include <memory>
@@ -16,8 +17,8 @@ class Table {
   private:
     struct Header {
         struct Column {
-            DataTypes type;
-            Attributes attributes;
+            ColumnFields::DataTypes type;
+            ColumnFields::Attributes attributes;
             size_t index;
         };
         std::map<std::string, Column> m_columns;

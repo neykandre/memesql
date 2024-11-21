@@ -3,10 +3,11 @@ project(memesql)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(SOURCES src/Cell.cpp)
+file(GLOB SOURCES src/*.cpp)
 
 add_library(memesql STATIC ${SOURCES})
 add_executable(main main.cpp)
+add_subdirectory(test)
 
 target_include_directories(memesql PRIVATE include)
 

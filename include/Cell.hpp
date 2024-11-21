@@ -1,28 +1,12 @@
 #pragma once
 
+#include "Definitions.hpp"
+#include <compare>
 #include <concepts>
-#include <cstdint>
 #include <ostream>
-#include <string>
-#include <string_view>
 #include <variant>
-#include <vector>
 
 namespace memesql {
-
-using Null   = std::monostate;
-using Int    = int32_t;
-using Bool   = bool;
-using String = std::string;
-
-class Bytes {
-    std::vector<uint8_t> m_bytes;
-
-  public:
-    Bytes(std::string_view sv);
-
-    friend std::ostream& operator<<(std::ostream&, const Bytes&);
-};
 
 template <typename T>
 concept Cell_t =
@@ -45,13 +29,23 @@ class Cell {
         return std::get<T>(m_value);
     }
 
-    template <Cell_t T>
-    void set(T&& value) {
-        m_value = value;
-    }
-
     bool is_null() const;
 
     friend std::ostream& operator<<(std::ostream&, const Cell&);
+
+    Cell operator+(const Cell& other) const;
+    Cell operator-(const Cell& other) const;
+    Cell operator*(const Cell& other) const;
+    Cell operator/(const Cell& other) const;
+    Cell operator%(const Cell& other) const;
+
+    std::strong_ordering operator<=>(const Cell& other) const;
+    bool operator==(const Cell& other) const;
+
+    Cell operator&&(const Cell& other) const;
+    Cell operator||(const Cell& other) const;
+    Cell operator^(const Cell& other) const;
+    Cell operator!() const;
+
 };
 } // namespace memesql
