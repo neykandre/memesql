@@ -1,12 +1,12 @@
 #pragma once
 
+#include "Response.hpp"
 #include "Table.hpp"
 #include <map>
 #include <memory>
 #include <string>
 
 namespace memesql {
-class Response;
 
 class DataBase {
     friend class SelectCommand;

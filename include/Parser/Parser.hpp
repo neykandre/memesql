@@ -68,7 +68,7 @@ class Parser {
             size_t offset = std::strlen("what():   ^ expected one of  ");
             ((message += append_type_name(types) + ", \n" + std::string(token.get_pos() + offset, ' ')), ...);
             message.erase(message.length() - std::strlen("expected one of "), std::strlen("expected one of "));
-            message += "BUT got '" + append_type_name(token.get_type()) + "'";
+            message += "BUT got " + append_type_name(token.get_type());
             throw ParserException(message, m_lexer->get_input(), token.get_pos());
         }
         return token;

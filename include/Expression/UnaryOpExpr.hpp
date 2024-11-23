@@ -11,15 +11,16 @@ class UnaryOpExpression : public Expression {
           m_expression(expression) {
     }
 
-    Cell evaluate(const Record& record) const override {
+    Cell evaluate(const Table& table, size_t row) const override {
         switch (m_op) {
         case UnaryOpType::NOT:
-            return !m_expression->evaluate(record);
+            return !m_expression->evaluate(table, row);
         case UnaryOpType::MINUS:
-            return -m_expression->evaluate(record);
+            return -m_expression->evaluate(table, row);
         case UnaryOpType::LENGTH:
-            return m_expression->evaluate(record).length();
+            return m_expression->evaluate(table, row).length();
         }
+        throw DBException("Invalid unary operator");
     }
 
     UnaryOpType get_op() const {

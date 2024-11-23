@@ -13,13 +13,13 @@ class CreateCommand : public Command {
     }
 
     Response execute(DataBase& db) override {
-        // if (db.m_tables.contains(m_table_name)) {
-        //     throw std::invalid_argument("Table already exists");
-        //     return Response(nullptr, 0, false);
-        // } else {
-        //     db.m_tables[m_table_name] = std::make_shared<Table>(m_header);
-        //     return Response(nullptr, 0, true);
-        // }
+        if (db.m_tables.contains(m_table_name)) {
+            throw CommandException("Table already exists");
+            return Response(false);
+        }
+
+        db.m_tables[m_table_name] = std::make_shared<Table>(m_header);
+        return Response(true);
     }
 
   private:

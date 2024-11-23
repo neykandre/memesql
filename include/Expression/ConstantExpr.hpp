@@ -8,7 +8,7 @@ class ConstantExpr : public Expression {
     explicit ConstantExpr(Cell value)
         : m_value(value) {
     }
-    Cell evaluate(const Record&) const override {
+    Cell evaluate(const Table&, size_t) const override {
         return m_value;
     }
 

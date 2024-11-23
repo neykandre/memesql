@@ -10,42 +10,42 @@ class BinaryOpExpr : public Expression {
 
   public:
     BinaryOpExpr(BinaryOpType op, std::shared_ptr<Expression> left,
-                    std::shared_ptr<Expression> right)
+                 std::shared_ptr<Expression> right)
         : m_left(std::move(left)),
           m_right(std::move(right)),
           m_op(op) {
     }
 
-    Cell evaluate(const Record& record) const override {
+    Cell evaluate(const Table& table, size_t row) const override {
         switch (m_op) {
         case BinaryOpType::ADD:
-            return m_left->evaluate(record) + m_right->evaluate(record);
+            return m_left->evaluate(table, row) + m_right->evaluate(table, row);
         case BinaryOpType::SUB:
-            return m_left->evaluate(record) - m_right->evaluate(record);
+            return m_left->evaluate(table, row) - m_right->evaluate(table, row);
         case BinaryOpType::MUL:
-            return m_left->evaluate(record) * m_right->evaluate(record);
+            return m_left->evaluate(table, row) * m_right->evaluate(table, row);
         case BinaryOpType::DIV:
-            return m_left->evaluate(record) / m_right->evaluate(record);
+            return m_left->evaluate(table, row) / m_right->evaluate(table, row);
         case BinaryOpType::MOD:
-            return m_left->evaluate(record) % m_right->evaluate(record);
+            return m_left->evaluate(table, row) % m_right->evaluate(table, row);
         case BinaryOpType::AND:
-            return m_left->evaluate(record) && m_right->evaluate(record);
+            return m_left->evaluate(table, row) && m_right->evaluate(table, row);
         case BinaryOpType::OR:
-            return m_left->evaluate(record) || m_right->evaluate(record);
+            return m_left->evaluate(table, row) || m_right->evaluate(table, row);
         case BinaryOpType::XOR:
-            return m_left->evaluate(record) ^ m_right->evaluate(record);
+            return m_left->evaluate(table, row) ^ m_right->evaluate(table, row);
         case BinaryOpType::EQUAL:
-            return m_left->evaluate(record) == m_right->evaluate(record);
+            return m_left->evaluate(table, row) == m_right->evaluate(table, row);
         case BinaryOpType::NOT_EQUAL:
-            return m_left->evaluate(record) != m_right->evaluate(record);
+            return m_left->evaluate(table, row) != m_right->evaluate(table, row);
         case BinaryOpType::GREATER:
-            return m_left->evaluate(record) > m_right->evaluate(record);
+            return m_left->evaluate(table, row) > m_right->evaluate(table, row);
         case BinaryOpType::LESS:
-            return m_left->evaluate(record) < m_right->evaluate(record);
+            return m_left->evaluate(table, row) < m_right->evaluate(table, row);
         case BinaryOpType::GREATER_EQUAL:
-            return m_left->evaluate(record) >= m_right->evaluate(record);
+            return m_left->evaluate(table, row) >= m_right->evaluate(table, row);
         case BinaryOpType::LESS_EQUAL:
-            return m_left->evaluate(record) <= m_right->evaluate(record);
+            return m_left->evaluate(table, row) <= m_right->evaluate(table, row);
         default:
             throw ExpressionException("Unknown binary operation");
         }
@@ -56,7 +56,8 @@ class BinaryOpExpr : public Expression {
     }
 
     bool is_comparison() const {
-        return m_op > BinaryOpType::COMPARE_START && m_op < BinaryOpType::COMPARE_END;
+        return m_op > BinaryOpType::COMPARE_START &&
+               m_op < BinaryOpType::COMPARE_END;
     }
 
     bool is_logical() const {

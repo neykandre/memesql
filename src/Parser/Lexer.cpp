@@ -2,7 +2,6 @@
 #include "Exceptions.hpp"
 #include <algorithm>
 #include <cctype>
-#include <type_traits>
 
 namespace memesql {
 const std::unordered_map<std::string, Token::Type> Lexer::m_tokens = {
@@ -29,7 +28,7 @@ const std::string& Lexer::get_token_name(const Token::Type& type) const {
         }
     }
 
-    throw LexerException("Unknown token type");
+    throw LexerException("Unknown token type", "", 0);
 }
 
 Token Lexer::get_next_token() {
@@ -77,13 +76,13 @@ Token Lexer::get_next_token() {
         }
 
         if (punct.empty()) {
-            throw LexerException("Unknown token");
+            throw LexerException("Unknown token", m_input, start);
         }
 
         return { m_tokens.at(punct), punct, start };
     }
 
-    throw LexerException("Unknown token" + std::to_string(m_pos));
+    throw LexerException("Unknown token" + std::string(1, m_input[m_pos]), m_input, start);
 }
 
 const std::string& Lexer::get_input() const {
@@ -113,7 +112,7 @@ std::string Lexer::get_string_literal() {
     }
 
     if (m_pos == m_input.size()) {
-        throw LexerException("Unterminated string literal");
+        throw LexerException("Unterminated string literal", m_input, m_pos - 2);
     }
     ++m_pos;
 
@@ -127,7 +126,7 @@ Int Lexer::get_number_literal() {
     }
 
     if (m_pos < m_input.size() && std::isalpha(m_input[m_pos])) {
-        throw LexerException("Invalid number literal");
+        throw LexerException("Invalid number literal", m_input, start);
     }
 
     return std::stoi(m_input.substr(start, m_pos - start));

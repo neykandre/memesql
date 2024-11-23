@@ -16,7 +16,9 @@ class CommandException : public DBException {
 
 class LexerException : public DBException {
   public:
-    using DBException::DBException;
+    LexerException(const std::string& message, const std::string& input, size_t pos)
+        : DBException(input + "\n" + std::string(pos + 11, ' ') + "^ " + message) {
+    }
 };
 
 class ParserException : public DBException {

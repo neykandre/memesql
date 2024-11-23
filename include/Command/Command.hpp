@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DataBase.hpp"
+#include "Exceptions.hpp"
 #include "Response.hpp"
 
 namespace memesql {

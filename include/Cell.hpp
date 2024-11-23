@@ -2,7 +2,6 @@
 
 #include "Definitions.hpp"
 #include <compare>
-#include <concepts>
 #include <ostream>
 #include <type_traits>
 #include <variant>

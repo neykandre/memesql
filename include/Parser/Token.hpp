@@ -2,8 +2,6 @@
 
 #include "../Cell.hpp"
 #include <cstddef>
-#include <string>
-#include <variant>
 
 namespace memesql {
 

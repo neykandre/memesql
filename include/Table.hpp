@@ -2,10 +2,10 @@
 
 #include "Cell.hpp"
 #include "Definitions.hpp"
-#include <list>
 #include <map>
 #include <memory>
 #include <optional>
+#include <vector>
 
 namespace memesql {
 
@@ -13,7 +13,7 @@ class Record;
 
 class Table {
   public:
-    using RecordList = std::list<std::shared_ptr<Record>>;
+    using RecordList = std::vector<std::shared_ptr<Record>>;
     struct Header {
         struct Column {
             ColumnFields::DataTypes type;
@@ -21,10 +21,10 @@ class Table {
             size_t index;
 
             std::optional<Cell> default_value;
-            bool has_default_value    = false;
-            
-            std::optional<int> length = 0;
-            
+            bool has_default_value = false;
+
+            std::optional<int> length;
+
             bool order_indexed   = false;
             bool unorder_indexed = false;
         };
@@ -33,9 +33,11 @@ class Table {
 
     explicit Table(const Header& header);
 
-    Header get_header() const;
+    const Header& get_header() const;
 
-    const RecordList& get_records() const;
+    const RecordList& get_all_records() const;
+    std::shared_ptr<Record> get_record(size_t index) const;
+
     void create_record(std::map<std::string, Cell> cells);
     void delete_record(std::shared_ptr<Record> record);
 

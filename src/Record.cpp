@@ -1,16 +1,15 @@
 #include "Record.hpp"
+#include "Exceptions.hpp"
 
 namespace memesql {
 
-Record::Record(std::map<std::string, Cell> cells)
-    : m_cells(cells) {
-}
+Record::Record(std::vector<Cell> cells) : m_cells(cells) {}
 
-const Cell& Record::operator[](const std::string& column_name) const {
-    if (!m_cells.contains(column_name)) {
-        throw std::invalid_argument("Unknown column name");
+const Cell& Record::get_cell(size_t index) const {
+    if (index >= m_cells.size()) {
+        throw DBException("Index out of range");
     }
 
-    return m_cells.at(column_name);
+    return m_cells[index];
 }
 } // namespace memesql
