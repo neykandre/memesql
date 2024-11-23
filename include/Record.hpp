@@ -6,13 +6,12 @@
 namespace memesql {
 
 class Record {
-    friend class Table;
 
     std::map<std::string, Cell> m_cells;
 
-    explicit Record(std::map<std::string, Cell> cells);
 
   public:
+    explicit Record(std::map<std::string, Cell> cells);
     // template <Cell_t T>
     // const T& get(const std::string& column_name) const {
     //     if (!m_cells.contains(column_name)) {

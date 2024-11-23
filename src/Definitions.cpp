@@ -2,6 +2,42 @@
 #include <iomanip>
 
 namespace memesql {
+
+namespace ColumnFields {
+bool Attributes::is_autoincrement() const {
+    return autoincrement;
+}
+
+bool Attributes::is_key() const {
+    return key;
+}
+
+bool Attributes::is_not_null() const {
+    return not_null;
+}
+
+bool Attributes::is_unique() const {
+    return unique;
+}
+
+void Attributes::add_autoincrement() {
+    autoincrement = true;
+}
+
+void Attributes::add_key() {
+    key = true;
+}
+
+void Attributes::add_not_null() {
+    not_null = true;
+}
+
+void Attributes::add_unique() {
+    unique = true;
+}
+
+} // namespace ColumnFields
+
 Bytes::Bytes(std::string_view sv) {
     if (sv.substr(0, 2) == "0x") {
         if (sv.size() % 2 != 0) {
@@ -15,6 +51,10 @@ Bytes::Bytes(std::string_view sv) {
     } else {
         m_bytes = sv;
     }
+}
+
+size_t Bytes::size() const {
+    return m_bytes.size();
 }
 
 std::ostream& operator<<(std::ostream& os, const Bytes& bytes) {

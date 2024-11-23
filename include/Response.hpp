@@ -6,13 +6,17 @@
 namespace memesql {
 
 class Response {
+  private:
     std::shared_ptr<Table> m_table;
-    using iterator = decltype(m_table->m_records)::iterator;
-
-    explicit Response(std::shared_ptr<Table> table);
+    size_t m_records_count;
+    bool m_is_ok;
+    using iterator = Table::RecordList::iterator;
 
   public:
-    iterator begin();
-    iterator end();
+    explicit Response(std::shared_ptr<Table> table, size_t records_count, bool is_ok);
+    iterator begin() const;
+    iterator end() const;
+    bool is_ok() const;
+    size_t records_count() const;
 };
 } // namespace memesql

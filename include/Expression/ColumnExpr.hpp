@@ -3,9 +3,9 @@
 #include "Expression.hpp"
 
 namespace memesql {
-class ColumnExpression : public Expression {
+class ColumnExpr : public Expression {
   public:
-    explicit ColumnExpression(std::string column_name)
+    explicit ColumnExpr(std::string column_name)
         : m_column_name(column_name) {
     }
     std::string get_column_name() const {

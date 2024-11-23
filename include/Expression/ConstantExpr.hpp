@@ -3,9 +3,9 @@
 #include "Expression.hpp"
 
 namespace memesql {
-class ConstantExpression : public Expression {
+class ConstantExpr : public Expression {
   public:
-    explicit ConstantExpression(Cell value)
+    explicit ConstantExpr(Cell value)
         : m_value(value) {
     }
     Cell evaluate(const Record&) const override {

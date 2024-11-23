@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "../include/Cell.hpp"
+#include "../include/Exceptions.hpp"
 
 using namespace memesql;
 
@@ -20,19 +21,19 @@ TEST(CellTest, AddStrings) {
 TEST(CellTest, AddIntAndString) {
     Cell c1(1);
     Cell c2("hello");
-    EXPECT_THROW(c1 + c2, std::invalid_argument);
+    EXPECT_THROW(c1 + c2, ExpressionException);
 }
 
 TEST(CellTest, AddNullAndInt) {
     Cell c1;
     Cell c2(1);
-    EXPECT_THROW(c1 + c2, std::invalid_argument);
+    EXPECT_THROW(c1 + c2, ExpressionException);
 }
 
 TEST(CellTest, AddNullAndString) {
     Cell c1;
     Cell c2("hello");
-    EXPECT_THROW(c1 + c2, std::invalid_argument);
+    EXPECT_THROW(c1 + c2, ExpressionException);
 }
 
 TEST(CellTest, CompareIntegers) {
@@ -71,10 +72,10 @@ TEST(CellTest, CompareBools) {
 TEST(CellTest, CompareMixedTypes) {
     Cell c1(1);
     Cell c2("abc");
-    EXPECT_THROW(c1 < c2, std::invalid_argument);
-    EXPECT_THROW(c1 > c2, std::invalid_argument);
-    EXPECT_THROW(c1 == c2, std::invalid_argument);
-    EXPECT_THROW(c1 != c2, std::invalid_argument);
+    EXPECT_THROW(c1 < c2, ExpressionException);
+    EXPECT_THROW(c1 > c2, ExpressionException);
+    EXPECT_THROW(c1 == c2, ExpressionException);
+    EXPECT_THROW(c1 != c2, ExpressionException);
 }
 
 int main(int argc, char **argv) {

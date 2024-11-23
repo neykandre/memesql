@@ -5,7 +5,7 @@
 namespace memesql {
 
 TEST(BinOpExpressionTest, AddIntegers) {
-    BinOpExpression expression(ArithmeticOperator::ADD,
+    BinaryOpExpr expression(ArithmeticOperator::ADD,
                                std::make_shared<ConstantExpression>(Cell(2)),
                                std::make_shared<ConstantExpression>(Cell(3)));
     Record record{ {{"a", Cell(2)}, {"b", Cell(3)}} };
@@ -14,7 +14,7 @@ TEST(BinOpExpressionTest, AddIntegers) {
 }
 
 TEST(BinOpExpressionTest, SubtractIntegers) {
-    BinOpExpression expression(ArithmeticOperator::SUB,
+    BinaryOpExpr expression(ArithmeticOperator::SUB,
                                std::make_shared<ConstantExpression>(Cell(5)),
                                std::make_shared<ConstantExpression>(Cell(2)));
     Record record;
@@ -23,7 +23,7 @@ TEST(BinOpExpressionTest, SubtractIntegers) {
 }
 
 TEST(BinOpExpressionTest, MultiplyIntegers) {
-    BinOpExpression expression(ArithmeticOperator::MUL,
+    BinaryOpExpr expression(ArithmeticOperator::MUL,
                                std::make_shared<ConstantExpression>(Cell(4)),
                                std::make_shared<ConstantExpression>(Cell(5)));
     Record record;
@@ -32,7 +32,7 @@ TEST(BinOpExpressionTest, MultiplyIntegers) {
 }
 
 TEST(BinOpExpressionTest, DivideIntegers) {
-    BinOpExpression expression(ArithmeticOperator::DIV,
+    BinaryOpExpr expression(ArithmeticOperator::DIV,
                                std::make_shared<ConstantExpression>(Cell(10)),
                                std::make_shared<ConstantExpression>(Cell(2)));
     Record record;
@@ -41,7 +41,7 @@ TEST(BinOpExpressionTest, DivideIntegers) {
 }
 
 TEST(BinOpExpressionTest, ModulusIntegers) {
-    BinOpExpression expression(ArithmeticOperator::MOD,
+    BinaryOpExpr expression(ArithmeticOperator::MOD,
                                std::make_shared<ConstantExpression>(Cell(17)),
                                std::make_shared<ConstantExpression>(Cell(5)));
     Record record;
@@ -50,7 +50,7 @@ TEST(BinOpExpressionTest, ModulusIntegers) {
 }
 
 TEST(BinOpExpressionTest, AddStrings) {
-    BinOpExpression expression(ArithmeticOperator::ADD,
+    BinaryOpExpr expression(ArithmeticOperator::ADD,
                                std::make_shared<ConstantExpression>(Cell("hello")),
                                std::make_shared<ConstantExpression>(Cell("world")));
     Record record;
@@ -58,7 +58,7 @@ TEST(BinOpExpressionTest, AddStrings) {
 }
 
 TEST(BinOpExpressionTest, DivideByZero) {
-    BinOpExpression expression(ArithmeticOperator::DIV,
+    BinaryOpExpr expression(ArithmeticOperator::DIV,
                                std::make_shared<ConstantExpression>(Cell(10)),
                                std::make_shared<ConstantExpression>(Cell(0)));
     Record record;

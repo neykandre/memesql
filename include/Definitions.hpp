@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Exceptions.hpp"
 #include <compare>
 #include <cstdint>
 #include <ostream>
 #include <string>
 #include <string_view>
+#include <sys/types.h>
 #include <variant>
 
 namespace memesql {
@@ -25,14 +27,37 @@ class Bytes {
     friend std::ostream& operator<<(std::ostream& os, const Bytes& bytes);
 
     std::strong_ordering operator<=>(const Bytes&) const = default;
+
+    size_t size() const;
 };
 
 namespace ColumnFields {
-enum class Attributes {
-    KEY           = 1L << 0,
-    NOT_NULL      = 1L << 1,
-    UNIQUE        = 1L << 2,
-    AUTOINCREMENT = 1L << 3
+// enum class Attributes : int {
+//     KEY           = 1L << 0,
+//     NOT_NULL      = 1L << 1,
+//     UNIQUE        = 1L << 2,
+//     AUTOINCREMENT = 1L << 3
+// };
+
+class Attributes {
+  public:
+    Attributes() = default;
+
+    bool is_autoincrement() const;
+    bool is_key() const;
+    bool is_not_null() const;
+    bool is_unique() const;
+
+    void add_autoincrement();
+    void add_key();
+    void add_not_null();
+    void add_unique();
+
+  private:
+    bool autoincrement = false;
+    bool unique        = false;
+    bool not_null      = false;
+    bool key           = false;
 };
 
 enum class DataTypes {
@@ -67,43 +92,35 @@ struct DataTypeTraits<DataTypes::BYTES> {
 
 } // namespace ColumnFields
 
-enum class ArithmeticOperator {
+enum class BinaryOpType {
+    ARITHM_START,
     ADD,
     SUB,
     MUL,
     DIV,
-    MOD
-};
+    MOD,
+    ARITHM_END,
 
-enum class ComparisonOperator {
+    COMPARE_START,
     EQUAL,
     NOT_EQUAL,
     LESS,
     LESS_EQUAL,
     GREATER,
-    GREATER_EQUAL
-};
+    GREATER_EQUAL,
+    COMPARE_END,
 
-enum class Logical {
+    LOGIC_START,
     AND,
     OR,
     XOR,
-    NOT
+    LOGIC_END
 };
 
-enum class QueryType {
-    SELECT,
-    INSERT,
-    UPDATE,
-    DELETE,
-    DROP
-};
-
-enum class JoinType {
-    INNER,
-    LEFT,
-    RIGHT,
-    FULL
+enum class UnaryOpType {
+    NOT,
+    MINUS,
+    LENGTH
 };
 
 } // namespace memesql

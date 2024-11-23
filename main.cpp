@@ -1,33 +1,31 @@
-// #include "Condition.hpp"
-#include "Cell.hpp"
-#include "Definitions.hpp"
-#include "Expression/ComparisonExpression.hpp"
-#include "Expression/ConstantExpression.hpp"
-#include "Expression/ColumnExpression.hpp"
-#include "Expression/Expression.hpp"
-#include <bits/stdc++.h>
-#include <memory>
-
+#include "Parser/Parser.hpp"
 using namespace memesql;
 
 int main() {
-    // Cell c1{ 1 };
-    // Cell c2{ "hello" };
-    // Cell c3{ true };
+    Parser parser;
 
-    // Condition::Comparison c = {
-    //     .left_operand  = { c1 },
-    //     .op            = Condition::Comparison::Operator::EQUAL,
-    //     .right_operand = {std::string{"123"}}
-    // };
+    auto command = parser.parse("create table users ({key, autoincrement} id :"
+                                "int3,"
+                                "{ unique } login"
+                                ": string[32], password_hash"
+                                ": bytes[8], is_admin"
+                                ": bool = false) ");
 
-    Cell c1{ 2 };
-    Cell c2{ 2 };
-
-    auto ce1 = std::make_shared<ConstantExpression>(c1);
-    auto ce2 = std::make_shared<ColumnExpression>("test");
-
-    std::shared_ptr<Expression> e1 = ce2;
-
-    std::cout << e1->is_column() << std::endl;
+    // auto token = lexer.get_next_token();
+    // while (token.get_type() != Token::Type::END_OF_FILE) {
+    //     switch (token.get_type()) {
+    //         #define ALL
+    //         #define TOKEN(name) case Token::Type::name: std::cout << #name << ":
+    //         "; break; #include "Parser/TokenEnum.hpp" #undef ALL #undef TOKEN
+    //         default:
+    //             std::cout << "Unknown token" << std::endl;
+    //             break;
+    //     }
+    //     std::visit(
+    //         [](auto&& value) {
+    //             std::cout << value << std::endl;
+    //         },
+    //         token.get_value());
+    //     token = lexer.get_next_token();
+    // }
 }
