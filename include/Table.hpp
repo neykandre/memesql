@@ -2,14 +2,13 @@
 
 #include "Cell.hpp"
 #include "Definitions.hpp"
+#include "Record.hpp"
 #include <map>
 #include <memory>
 #include <optional>
 #include <vector>
 
 namespace memesql {
-
-class Record;
 
 class Table {
   public:
@@ -39,7 +38,7 @@ class Table {
     std::shared_ptr<Record> get_record(size_t index) const;
 
     void create_record(std::map<std::string, Cell> cells);
-    void delete_record(std::shared_ptr<Record> record);
+    void delete_record(size_t index);
 
   private:
     Header m_header;

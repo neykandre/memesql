@@ -32,12 +32,6 @@ class Bytes {
 };
 
 namespace ColumnFields {
-// enum class Attributes : int {
-//     KEY           = 1L << 0,
-//     NOT_NULL      = 1L << 1,
-//     UNIQUE        = 1L << 2,
-//     AUTOINCREMENT = 1L << 3
-// };
 
 class Attributes {
   public:
