@@ -8,6 +8,7 @@
 #include <string_view>
 #include <sys/types.h>
 #include <variant>
+#include <vector>
 
 namespace memesql {
 
@@ -19,7 +20,7 @@ using String = std::string;
 std::ostream& operator<<(std::ostream& os, const Null&);
 
 class Bytes {
-    std::string m_bytes;
+    std::vector<uint8_t> m_bytes;
 
   public:
     explicit Bytes(std::string_view sv);

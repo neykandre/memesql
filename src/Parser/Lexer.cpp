@@ -15,6 +15,14 @@ Lexer::Lexer(const std::string& input)
       m_pos(0) {
 }
 
+size_t Lexer::get_pos() const {
+    return m_pos;
+}
+
+void Lexer::set_pos(size_t pos) {
+    m_pos = pos;
+}
+
 void Lexer::skip_space() {
     while (m_pos < m_input.size() && std::isspace(m_input[m_pos])) {
         ++m_pos;
@@ -47,9 +55,9 @@ Token Lexer::get_next_token() {
     }
 
     if (m_pos + 2 < m_input.size() && m_input.substr(m_pos, 2) == "0x") {
-        std::string str = get_string_literal();
+        std::string str = get_word();
 
-        return { Token::Type::BYTES_LITERAL, str, start };
+        return { Token::Type::BYTES_LITERAL, Bytes{ str }, start };
     }
 
     if (std::isdigit(m_input[m_pos])) {
@@ -62,6 +70,15 @@ Token Lexer::get_next_token() {
         std::string word = get_word();
 
         if (m_tokens.contains(to_lower(word))) {
+            if (word == "true") {
+                return { Token::Type::TRUE, true, start };
+            }
+            if (word == "false") {
+                return { Token::Type::FALSE, false, start };
+            }
+            if (word == "null") {
+                return { Token::Type::NULL_LITERAL, Null{}, start };
+            }
             return { m_tokens.at(to_lower(word)), word, start };
         }
 
@@ -82,7 +99,8 @@ Token Lexer::get_next_token() {
         return { m_tokens.at(punct), punct, start };
     }
 
-    throw LexerException("Unknown token" + std::string(1, m_input[m_pos]), m_input, start);
+    throw LexerException("Unknown token" + std::string(1, m_input[m_pos]), m_input,
+                         start);
 }
 
 const std::string& Lexer::get_input() const {
@@ -112,7 +130,7 @@ std::string Lexer::get_string_literal() {
     }
 
     if (m_pos == m_input.size()) {
-        throw LexerException("Unterminated string literal", m_input, m_pos - 2);
+        throw LexerException("Unterminated string literal", m_input, m_pos);
     }
     ++m_pos;
 

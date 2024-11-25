@@ -3,7 +3,7 @@
 #include "Cell.hpp"
 #include "Definitions.hpp"
 #include "Record.hpp"
-#include <map>
+#include <unordered_map>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -20,14 +20,13 @@ class Table {
             size_t index;
 
             std::optional<Cell> default_value;
-            bool has_default_value = false;
 
             std::optional<int> length;
 
             bool order_indexed   = false;
             bool unorder_indexed = false;
         };
-        std::map<std::string, Column> columns;
+        std::unordered_map<std::string, Column> columns;
     };
 
     explicit Table(const Header& header);
@@ -37,7 +36,7 @@ class Table {
     const RecordList& get_all_records() const;
     std::shared_ptr<Record> get_record(size_t index) const;
 
-    void create_record(std::map<std::string, Cell> cells);
+    void create_record(std::unordered_map<std::string, Cell> cells);
     void delete_record(size_t index);
 
   private:

@@ -22,6 +22,16 @@ class Token {
         : m_type(type),
           m_pos(pos) {};
 
+    Token(const Token& other) = default;
+
+    Token& operator=(const Token& other){
+        m_prev_type = m_type;
+        m_type = other.m_type;
+        m_value = other.m_value;
+        m_pos = other.m_pos;
+        return *this;
+    }
+
     Type get_type() const {
         return m_type;
     }
@@ -31,8 +41,16 @@ class Token {
         return std::get<T>(m_value);
     }
 
+    const Cell_value& get_cell() const {
+        return m_value;
+    }
+
     size_t get_pos() const {
         return m_pos;
+    }
+
+    Type get_prev_type() const {
+        return m_prev_type;
     }
 
     bool is_keyword() const {
@@ -55,5 +73,6 @@ class Token {
     Type m_type;
     Cell_value m_value;
     size_t m_pos;
+    Type m_prev_type;
 };
 } // namespace memesql

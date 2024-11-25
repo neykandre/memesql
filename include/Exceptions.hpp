@@ -17,14 +17,14 @@ class CommandException : public DBException {
 class LexerException : public DBException {
   public:
     LexerException(const std::string& message, const std::string& input, size_t pos)
-        : DBException(input + "\n" + std::string(pos + 11, ' ') + "^ " + message) {
+        : DBException("\n" + input + "\n" + std::string(pos, ' ') + "^ " + message) {
     }
 };
 
 class ParserException : public DBException {
   public:
     ParserException(const std::string& message, const std::string& input, size_t pos)
-        : DBException(input + "\n" + std::string(pos + 11, ' ') + "^ " + message) {
+        : DBException("\n" + input + "\n" + std::string(pos, ' ') + "^ " + message) {
     }
 };
 

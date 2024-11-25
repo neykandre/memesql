@@ -31,6 +31,8 @@ class Cell {
         return std::get<T>(m_value);
     }
 
+    const Cell_value& get_variant() const;
+
     bool is_null() const;
 
     friend std::ostream& operator<<(std::ostream&, const Cell&);

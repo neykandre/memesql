@@ -11,6 +11,7 @@ namespace memesql {
 class DataBase {
     friend class SelectCommand;
     friend class CreateCommand;
+    friend class InsertCommand;
 
   public:
     Response execute(const std::string& query);

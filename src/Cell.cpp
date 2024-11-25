@@ -138,4 +138,8 @@ std::string Cell::to_string() const {
     return s.str();
 }
 
+const Cell_value& Cell::get_variant() const {
+    return m_value;
+}
+
 } // namespace memesql

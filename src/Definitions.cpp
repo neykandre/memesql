@@ -41,7 +41,7 @@ Bytes::Bytes(std::string_view sv) {
                 std::stoul(std::string{ sv.substr(i, 2) }, nullptr, 16));
         }
     } else {
-        m_bytes = sv;
+        m_bytes = std::vector<uint8_t>(sv.begin(), sv.end());
     }
 }
 
@@ -57,7 +57,9 @@ std::ostream& operator<<(std::ostream& os, const Bytes& bytes) {
                << static_cast<int>(byte);
         }
     } else {
-        os << bytes.m_bytes;
+        for (const auto& byte : bytes.m_bytes) {
+            os << static_cast<char>(byte);
+        }
     }
     return os;
 }
