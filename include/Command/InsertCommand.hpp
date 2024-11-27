@@ -1,9 +1,7 @@
 #pragma once
 
 #include "Command.hpp"
-#include "DataBase.hpp"
 #include "Definitions.hpp"
-#include "Response.hpp"
 #include <unordered_map>
 
 namespace memesql {
@@ -21,7 +19,6 @@ class InsertCommand : public Command {
     Response execute(DataBase& db) override {
         if (!db.m_tables.contains(m_table_name)) {
             throw CommandException("Table does not exist");
-            return Response(false);
         }
 
         Map cells;
@@ -46,8 +43,7 @@ class InsertCommand : public Command {
         return Response{ { ThinnedTable{ db.m_tables[m_table_name],
                                          { row_index },
                                          columns_names } },
-                         1,
-                         true };
+                         1 };
     }
 
   private:

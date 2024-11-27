@@ -11,7 +11,7 @@ class UnaryOpExpression : public Expression {
           m_expression(expression) {
     }
 
-    Cell evaluate(const Table& table, size_t row) const override {
+    Cell evaluate(std::shared_ptr<Table> table, size_t row) const override {
         switch (m_op) {
         case UnaryOpType::NOT:
             return !m_expression->evaluate(table, row);

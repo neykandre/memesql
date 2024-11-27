@@ -20,37 +20,57 @@
 #define LITERALS
 #define PUNCTUATION
 #define OPERATORS
+#define SERVICE
 #define START_END
 #endif
 
 #ifdef KEYWORDS
 
+
+#ifdef START_END
+TOKEN(COMMANDS_START)
+#endif
+
+MAP(SELECT, "select")
+MAP(INSERT, "insert")
+MAP(DELETE, "delete")
+MAP(UPDATE, "update")
+MAP(DROP, "drop")
+MAP(CREATE, "create")
+
+#ifdef START_END
+TOKEN(COMMANDS_END)
+#endif
+
 #ifdef START_END
 TOKEN(KEYWORDS_START)
 #endif
 
-MAP(SELECT, "select")
 MAP(TABLE, "table")
-MAP(INSERT, "insert")
 MAP(TO, "to")
-MAP(UPDATE, "update")
-MAP(DELETE, "delete")
-MAP(CREATE, "create")
-MAP(DROP, "drop")
 MAP(UNIQUE, "unique")
 MAP(AUTOINCREMENT, "autoincrement")
 MAP(KEY, "key")
 MAP(NOT_NULL, "not_null")
-MAP(INT, "int32")
-MAP(BOOL, "bool")
-MAP(STRING, "string")
-MAP(BYTES, "bytes")
 MAP(WHERE, "where")
 MAP(FROM, "from")
 MAP(IS, "is")
 
 #ifdef START_END
 TOKEN(KEYWORDS_END)
+#endif
+
+#ifdef START_END
+TOKEN(DATATYPES_START)
+#endif
+
+MAP(INT, "int32")
+MAP(BOOL, "bool")
+MAP(STRING, "string")
+MAP(BYTES, "bytes")
+
+#ifdef START_END
+TOKEN(DATATYPES_END)
 #endif
 
 #endif
@@ -78,7 +98,6 @@ MAP(GREATER_EQUAL, ">=")
 MAP(AND, "&&")
 MAP(OR, "||")
 MAP(XOR, "^^")
-MAP(NOT, "!")
 
 #ifdef START_END
 TOKEN(OPERATORS_END)
@@ -94,6 +113,7 @@ TOKEN(OPERATORS_END)
 TOKEN(PUNCTUATION_START)
 #endif
 
+MAP(NOT, "!")
 MAP(COMMA, ",")
 MAP(DOT, ".")
 MAP(COLON, ":")
@@ -119,8 +139,6 @@ TOKEN(PUNCTUATION_END)
 TOKEN(LITERALS_START)
 #endif
 
-TOKEN(END_OF_FILE)
-TOKEN(IDENTIFIER)
 TOKEN(NUMBER_LITERAL)
 TOKEN(STRING_LITERAL)
 TOKEN(BYTES_LITERAL)
@@ -134,10 +152,29 @@ TOKEN(LITERALS_END)
 
 #endif
 
+#ifdef SERVICE
+
+#ifdef START_END
+TOKEN(SERVICE_START)
+#endif
+
+TOKEN(IDENTIFIER)
+TOKEN(NOT_EXPECTED)
+TOKEN(END_OF_FILE)
+
+#ifdef START_END
+TOKEN(SERVICE_END)
+#endif
+
+#endif
+
+#ifdef ALL
 #undef KEYWORDS
 #undef LITERALS
 #undef PUNCTUATION
 #undef OPERATORS
+#undef SERVICE
 #undef START_END
 #undef MAP
 #undef TOKEN
+#endif

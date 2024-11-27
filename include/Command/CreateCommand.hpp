@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../DataBase.hpp"
-#include "../Response.hpp"
 #include "Command.hpp"
 #include "Definitions.hpp"
 #include "Exceptions.hpp"
@@ -17,7 +15,6 @@ class CreateCommand : public Command {
     Response execute(DataBase& db) override {
         if (db.m_tables.contains(m_table_name)) {
             throw CommandException("Table already exists");
-            return Response(false);
         }
 
         for (auto&& [column_name, column] : m_header.columns) {
@@ -27,7 +24,7 @@ class CreateCommand : public Command {
         }
 
         db.m_tables[m_table_name] = std::make_shared<Table>(m_header);
-        return Response(true);
+        return Response();
     }
 
   private:

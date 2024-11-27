@@ -14,7 +14,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 # Add test executable
-add_executable(${PROJECT_NAME} CellTest.cpp TableTest.cpp)
+add_executable(${PROJECT_NAME} SelectTest.cpp)
 
 # Link against Google Test
 target_link_libraries(${PROJECT_NAME} gtest_main memesql)

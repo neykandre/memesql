@@ -39,6 +39,13 @@ const std::string& Lexer::get_token_name(const Token::Type& type) const {
     throw LexerException("Unknown token type", "", 0);
 }
 
+Token Lexer::peek_next_token() {
+    size_t pos = m_pos;
+    Token token = get_next_token();
+    set_pos(pos);
+    return token;
+}
+
 Token Lexer::get_next_token() {
     skip_space();
 

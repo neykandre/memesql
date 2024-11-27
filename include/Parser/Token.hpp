@@ -20,15 +20,20 @@ class Token {
 
     Token(Type type, size_t pos)
         : m_type(type),
-          m_pos(pos) {};
+          m_pos(pos),
+          m_prev_type(Type::NOT_EXPECTED) {};
+
+    Token()
+        : m_type(Type::NOT_EXPECTED),
+          m_prev_type(Token::Type::NOT_EXPECTED) {};
 
     Token(const Token& other) = default;
 
-    Token& operator=(const Token& other){
+    Token& operator=(const Token& other) {
         m_prev_type = m_type;
-        m_type = other.m_type;
-        m_value = other.m_value;
-        m_pos = other.m_pos;
+        m_type      = other.m_type;
+        m_value     = other.m_value;
+        m_pos       = other.m_pos;
         return *this;
     }
 
@@ -36,7 +41,7 @@ class Token {
         return m_type;
     }
 
-    template<Cell_t T>
+    template <Cell_t T>
     T get_value() const {
         return std::get<T>(m_value);
     }

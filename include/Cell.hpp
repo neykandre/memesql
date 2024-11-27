@@ -44,6 +44,7 @@ class Cell {
     Cell operator%(const Cell& other) const;
 
     Cell operator-() const;
+    explicit operator bool() const;
 
     std::strong_ordering operator<=>(const Cell& other) const;
     bool operator==(const Cell& other) const;

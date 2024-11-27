@@ -16,7 +16,7 @@ const Table::RecordList& Table::get_all_records() const {
 }
 
 std::shared_ptr<Record> Table::get_record(size_t index) const {
-    return m_records[index];
+    return m_records.at(index);
 }
 
 void Table::create_record(std::unordered_map<std::string, Cell> cells) {
@@ -32,7 +32,7 @@ void Table::create_record(std::unordered_map<std::string, Cell> cells) {
                     record_cells[column.index] = 0;
                 } else {
                     record_cells[column.index] =
-                        m_records.back()->get_cell(column.index) + 1;
+                        m_records.back()->get_cell(column.index) + Cell{1};
                 }
             } else if (column.attributes.is_key()) {
                 throw CommandException("column" + column_name +

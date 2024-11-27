@@ -3,6 +3,7 @@
 #include "../Definitions.hpp"
 #include "../Exceptions.hpp"
 #include "Expression.hpp"
+#include "Table.hpp"
 #include <memory>
 
 namespace memesql {
@@ -16,11 +17,11 @@ class BinaryOpExpr : public Expression {
           m_op(op) {
     }
 
-    Cell evaluate(const Table& table, size_t row) const override {
+    Cell evaluate(std::shared_ptr<Table> table, size_t row) const override {
         switch (m_op) {
-        case BinaryOpType::ADD:
+        case BinaryOpType::PLUS:
             return m_left->evaluate(table, row) + m_right->evaluate(table, row);
-        case BinaryOpType::SUB:
+        case BinaryOpType::MINUS:
             return m_left->evaluate(table, row) - m_right->evaluate(table, row);
         case BinaryOpType::MUL:
             return m_left->evaluate(table, row) * m_right->evaluate(table, row);
@@ -47,7 +48,7 @@ class BinaryOpExpr : public Expression {
         case BinaryOpType::LESS_EQUAL:
             return m_left->evaluate(table, row) <= m_right->evaluate(table, row);
         default:
-            throw ExpressionException("Unknown binary operation");
+            throw ExpressionException("unknown binary operation");
         }
     }
 

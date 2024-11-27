@@ -25,7 +25,9 @@ TEST(TableTest, GetHeader) {
 TEST(TableTest, GetAllRecords) {
     memesql::Table::Header header;
     header.columns["column1"].type = memesql::ColumnFields::DataTypes::INT;
+    header.columns["column1"].index = 0;
     header.columns["column2"].type = memesql::ColumnFields::DataTypes::STRING;
+    header.columns["column2"].index = 1;
 
     memesql::Table table(header);
     table.create_record({{"column1", memesql::Cell(1)}, {"column2", memesql::Cell("hello")}});
@@ -38,7 +40,9 @@ TEST(TableTest, GetAllRecords) {
 TEST(TableTest, GetRecord) {
     memesql::Table::Header header;
     header.columns["column1"].type = memesql::ColumnFields::DataTypes::INT;
+    header.columns["column1"].index = 0;
     header.columns["column2"].type = memesql::ColumnFields::DataTypes::STRING;
+    header.columns["column2"].index = 1;
 
     memesql::Table table(header);
     table.create_record({{"column1", memesql::Cell(1)}, {"column2", memesql::Cell("hello")}});
@@ -53,7 +57,9 @@ TEST(TableTest, GetRecord) {
 TEST(TableTest, GetRecordOutOfBounds) {
     memesql::Table::Header header;
     header.columns["column1"].type = memesql::ColumnFields::DataTypes::INT;
+    header.columns["column1"].index = 0;
     header.columns["column2"].type = memesql::ColumnFields::DataTypes::STRING;
+    header.columns["column2"].index = 1;
 
     memesql::Table table(header);
     table.create_record({{"column1", memesql::Cell(1)}, {"column2", memesql::Cell("hello")}});
@@ -64,7 +70,9 @@ TEST(TableTest, GetRecordOutOfBounds) {
 TEST(TableTest, CreateRecord) {
     memesql::Table::Header header;
     header.columns["column1"].type = memesql::ColumnFields::DataTypes::INT;
+    header.columns["column1"].index = 0;
     header.columns["column2"].type = memesql::ColumnFields::DataTypes::STRING;
+    header.columns["column2"].index = 1;
 
     memesql::Table table(header);
     table.create_record({{"column1", memesql::Cell(1)}, {"column2", memesql::Cell("hello")}});
@@ -76,7 +84,9 @@ TEST(TableTest, CreateRecord) {
 TEST(TableTest, DeleteRecord) {
     memesql::Table::Header header;
     header.columns["column1"].type = memesql::ColumnFields::DataTypes::INT;
+    header.columns["column1"].index = 0;
     header.columns["column2"].type = memesql::ColumnFields::DataTypes::STRING;
+    header.columns["column2"].index = 1;
 
     memesql::Table table(header);
     table.create_record({{"column1", memesql::Cell(1)}, {"column2", memesql::Cell("hello")}});

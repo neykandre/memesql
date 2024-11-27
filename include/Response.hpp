@@ -26,21 +26,19 @@ class ThinnedTable {
 
 class Response {
 
-  friend class ResponseIterator;
+    friend class ResponseIterator;
 
   public:
-
-    explicit Response(bool is_ok);
-    explicit Response(std::vector<ThinnedTable> tables, size_t records_count,
-                      bool is_ok);
+    Response() = default;
+    explicit Response(std::vector<ThinnedTable> tables, size_t records_count);
+    
     ResponseIterator begin() const;
     ResponseIterator end() const;
-    bool is_ok() const;
+    
     size_t records_count() const;
 
   private:
     std::vector<ThinnedTable> m_tables;
-    size_t m_records_count{};
-    bool m_is_ok;
+    size_t m_records_count;
 };
 } // namespace memesql

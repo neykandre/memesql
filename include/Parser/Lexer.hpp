@@ -9,6 +9,7 @@ class Lexer {
     explicit Lexer(const std::string& input);
 
     Token get_next_token();
+    Token peek_next_token();
     size_t get_pos() const;
     void set_pos(size_t pos);
     const std::string& get_token_name(const Token::Type&) const;

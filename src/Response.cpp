@@ -22,27 +22,20 @@ const std::vector<std::string>& ThinnedTable::get_columns_names() const {
     return m_columns_names;
 }
 
-Response::Response(std::vector<ThinnedTable> tables, size_t records_count,
-                   bool is_ok)
+Response::Response(std::vector<ThinnedTable> tables, size_t records_count)
     : m_tables(tables),
-      m_records_count(records_count),
-      m_is_ok(is_ok) {
-}
-
-Response::Response(bool is_ok)
-    : m_is_ok(is_ok) {
+      m_records_count(records_count) {
 }
 
 ResponseIterator Response::begin() const {
+    if (m_records_count == 0) {
+        return end();
+    }
     return ResponseIterator(*this, 0, 0);
 }
 
 ResponseIterator Response::end() const {
     return ResponseIterator(*this, m_tables.size(), 0);
-}
-
-bool Response::is_ok() const {
-    return m_is_ok;
 }
 
 size_t Response::records_count() const {

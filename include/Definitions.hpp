@@ -89,8 +89,8 @@ struct DataTypeTraits<DataTypes::BYTES> {
 
 enum class BinaryOpType {
     ARITHM_START,
-    ADD,
-    SUB,
+    PLUS,
+    MINUS,
     MUL,
     DIV,
     MOD,

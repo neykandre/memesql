@@ -71,6 +71,13 @@ Cell Cell::operator-() const {
     throw ExpressionException("unary -: Incompatible type");
 }
 
+Cell::operator bool() const {
+    if (std::holds_alternative<Bool>(m_value)) {
+        return std::get<Bool>(m_value);
+    }
+    throw ExpressionException("not boolean type");
+}
+
 std::strong_ordering Cell::operator<=>(const Cell& other) const {
     return std::visit(
         [&](auto&& value, auto&& other_value) -> std::strong_ordering {
@@ -121,10 +128,10 @@ Cell Cell::operator!() const {
 Cell Cell::length() const {
     return std::visit(
         [](auto&& value) -> Cell {
-            if constexpr (std::is_same_v<decltype(value), String> ||
-                          std::is_same_v<decltype(value), Bytes>) {
+            if constexpr (std::is_same_v<std::decay_t<decltype(value)>, String> ||
+                          std::is_same_v<std::decay_t<decltype(value)>, Bytes>) {
 
-                return value.size();
+                return Int(value.size());
             } else {
                 throw ExpressionException("length(): Incompatible type");
             }
