@@ -4,6 +4,8 @@
 #include "Command/CreateCommand.hpp"
 #include "Command/InsertCommand.hpp"
 #include "Command/SelectCommand.hpp"
+#include "Command/DeleteCommand.hpp"
+#include "Command/UpdateCommand.hpp"
 #include "Definitions.hpp"
 #include "Exceptions.hpp"
 #include "Expression/Expression.hpp"
@@ -20,6 +22,7 @@ class Parser {
     std::shared_ptr<Command> parse(const std::string& query);
 
   private:
+    int get_precedence(Token::Type) const;
     std::shared_ptr<Expression> parse_expression();
     std::shared_ptr<Expression> parse_paren_expression(Token::Type);
     std::shared_ptr<Expression> parse_primary();
@@ -37,9 +40,9 @@ class Parser {
     InsertCommand::Map parse_map();
     InsertCommand::Vector parse_vector();
 
-    std::shared_ptr<Command> parse_update();
+    std::shared_ptr<UpdateCommand> parse_update();
 
-    std::shared_ptr<Command> parse_delete();
+    std::shared_ptr<DeleteCommand> parse_delete();
 
     std::shared_ptr<Command> parse_drop();
 

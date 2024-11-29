@@ -12,6 +12,8 @@ class DataBase {
     friend class SelectCommand;
     friend class CreateCommand;
     friend class InsertCommand;
+    friend class DeleteCommand;
+    friend class UpdateCommand;
 
   public:
     Response execute(const std::string& query);

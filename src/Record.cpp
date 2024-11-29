@@ -1,15 +1,18 @@
 #include "Record.hpp"
 #include "Exceptions.hpp"
+#include <cstddef>
 
 namespace memesql {
 
-Record::Record(std::vector<Cell> cells) : m_cells(cells) {}
+Record::Record(std::vector<Cell> cells)
+    : m_cells(cells) {
+}
 
 const Cell& Record::get_cell(size_t index) const {
-    if (index >= m_cells.size()) {
-        throw DBException("Index out of range");
-    }
+    return m_cells.at(index);
+}
 
-    return m_cells[index];
+Cell& Record::get_cell(size_t index) {
+    return m_cells.at(index);
 }
 } // namespace memesql

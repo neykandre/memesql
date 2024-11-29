@@ -6,13 +6,13 @@
 #include <unordered_map>
 #include <memory>
 #include <optional>
-#include <vector>
+#include <list>
 
 namespace memesql {
 
 class Table {
   public:
-    using RecordList = std::vector<std::shared_ptr<Record>>;
+    using RecordList = std::list<std::shared_ptr<Record>>;
     struct Header {
         struct Column {
             ColumnFields::DataTypes type;
@@ -34,10 +34,10 @@ class Table {
     const Header& get_header() const;
 
     const RecordList& get_all_records() const;
-    std::shared_ptr<Record> get_record(size_t index) const;
 
-    void create_record(std::unordered_map<std::string, Cell> cells);
-    void delete_record(size_t index);
+    RecordList::const_iterator create_record(std::unordered_map<std::string, Cell> cells);
+    RecordList::const_iterator delete_record(RecordList::const_iterator);
+    RecordList::const_iterator update_record(RecordList::const_iterator, std::unordered_map<std::string, Cell> update_cells);
 
   private:
     Header m_header;

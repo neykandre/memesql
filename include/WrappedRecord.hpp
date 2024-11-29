@@ -14,13 +14,18 @@ class WrappedRecord {
         : m_record(record),
           m_column_indices(std::move(column_indices)) {};
 
-    template <Cell_t T>
-    const T& get(const std::string& column_name) const {
-        if (!m_column_indices.contains(column_name)) {
+    const Cell& get_cell(const std::string& column_name) const {
+      if (!m_column_indices.contains(column_name)) {
             throw DBException("Unknown column name");
         }
-        return m_record.lock()->get_cell(m_column_indices.at(column_name)).get<T>();
+        return m_record.lock()->get_cell(m_column_indices.at(column_name));
     }
+
+    template <Cell_t T>
+    const T& get(const std::string& column_name) const {
+        get_cell(column_name).get<T>();
+    }
+
 
   private:
     std::weak_ptr<Record> m_record;

@@ -24,7 +24,7 @@ class CreateCommand : public Command {
         }
 
         db.m_tables[m_table_name] = std::make_shared<Table>(m_header);
-        return Response();
+        return Response{};
     }
 
   private:

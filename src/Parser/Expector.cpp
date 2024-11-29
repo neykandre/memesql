@@ -25,6 +25,12 @@ std::string Expector::append_type_name(Token::Type type) {
         return std::string{ "identifier" };
     } else if (type == Token::Type::END_OF_FILE) {
         return std::string{ "end of file" };
+    } else if (type > Token::Type::DATATYPES_START &&
+               type < Token::Type::DATATYPES_END) {
+        return "datatype '" + m_lexer->get_token_name(type) + "'";
+    } else if (type > Token::Type::LITERALS_START &&
+               type < Token::Type::LITERALS_END) {
+        return "literal '" + m_lexer->get_token_name(type) + "'";
     } else {
         return std::string{ "unknown token type" };
     }

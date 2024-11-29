@@ -30,7 +30,9 @@ class ParserException : public DBException {
 
 class ExpressionException : public DBException {
   public:
-    using DBException::DBException;
+    ExpressionException(const std::string& message, const std::string& input, size_t pos)
+        : DBException("\n" + input + "\n" + std::string(pos, ' ') + "^ " + message) {
+    }
 };
 
 } // namespace memesql

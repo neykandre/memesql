@@ -1,6 +1,7 @@
 #include "Table.hpp"
 #include "Exceptions.hpp"
 #include "Record.hpp"
+#include <unordered_map>
 
 namespace memesql {
 Table::Table(const Header& header)
@@ -15,11 +16,8 @@ const Table::RecordList& Table::get_all_records() const {
     return m_records;
 }
 
-std::shared_ptr<Record> Table::get_record(size_t index) const {
-    return m_records.at(index);
-}
-
-void Table::create_record(std::unordered_map<std::string, Cell> cells) {
+Table::RecordList::const_iterator Table::create_record(
+    std::unordered_map<std::string, Cell> cells) {
     std::vector<Cell> record_cells(m_header.columns.size());
 
     // check for autocomplete
@@ -32,7 +30,7 @@ void Table::create_record(std::unordered_map<std::string, Cell> cells) {
                     record_cells[column.index] = 0;
                 } else {
                     record_cells[column.index] =
-                        m_records.back()->get_cell(column.index) + Cell{1};
+                        m_records.back()->get_cell(column.index) + Cell{ 1 };
                 }
             } else if (column.attributes.is_key()) {
                 throw CommandException("column" + column_name +
@@ -46,26 +44,46 @@ void Table::create_record(std::unordered_map<std::string, Cell> cells) {
     }
 
     for (auto&& [column_name, cell] : cells) {
+        auto&& column = m_header.columns.at(column_name);
         if (!cell.is_null() &&
-            (m_header.columns.at(column_name).attributes.is_key() ||
-             m_header.columns.at(column_name).attributes.is_unique())) {
+            (column.attributes.is_key() || column.attributes.is_unique())) {
             for (auto&& record : m_records) {
-                if (record->get_cell(m_header.columns.at(column_name).index) ==
-                    cell) {
+                if (record->get_cell(column.index) == cell) {
                     throw CommandException("Duplicate unique value");
                 }
             }
         }
         if (!cell.is_null()) {
-            record_cells[m_header.columns.at(column_name).index] = cell;
+            record_cells[column.index] = cell;
         }
     }
 
-    m_records.push_back(std::make_shared<Record>(record_cells));
+    return m_records.insert(m_records.end(), std::make_shared<Record>(record_cells));
 }
 
-void Table::delete_record(size_t index) {
-    m_records.erase(m_records.begin() + index);
+Table::RecordList::const_iterator Table::delete_record(
+    RecordList::const_iterator it) {
+    return m_records.erase(it);
+}
+
+Table::RecordList::const_iterator Table::update_record(
+    RecordList::const_iterator it,
+    std::unordered_map<std::string, Cell> update_cells) {
+
+    for (auto&& [column_name, cell] : update_cells) {
+        auto&& column = m_header.columns.at(column_name);
+        if (!cell.is_null() &&
+            (column.attributes.is_key() || column.attributes.is_unique())) {
+            for (auto&& record : m_records) {
+                if (record != *it && record->get_cell(column.index) == cell) {
+                    throw CommandException("Duplicate unique value");
+                }
+            }
+        }
+        (*it)->get_cell(column.index) = cell;
+    }
+
+    return it;
 }
 
 } // namespace memesql

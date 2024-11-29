@@ -2,15 +2,19 @@
 
 #include "Command.hpp"
 #include "Definitions.hpp"
+#include "Exceptions.hpp"
+#include "Expression/Expression.hpp"
+#include <memory>
 #include <unordered_map>
 
 namespace memesql {
 class InsertCommand : public Command {
 
   public:
-    using Map           = std::unordered_map<std::string, Cell>;
-    using Vector        = std::vector<Cell>;
+    using Map    = std::unordered_map<std::string, std::shared_ptr<Expression>>;
+    using Vector = std::vector<std::shared_ptr<Expression>>;
     using InsertionType = std::variant<Vector, Map>;
+    using CellMap       = std::unordered_map<std::string, Cell>;
     InsertCommand(InsertionType insertion, std::string table_name)
         : m_insertion(insertion),
           m_table_name(table_name) {
@@ -21,18 +25,25 @@ class InsertCommand : public Command {
             throw CommandException("Table does not exist");
         }
 
-        Map cells;
+        Map expressions;
         if (std::holds_alternative<Vector>(m_insertion)) {
-            cells = construct_map_from_vector(db);
+            expressions = construct_map_from_vector(db);
         } else {
-            cells = std::get<Map>(m_insertion);
+            expressions = std::get<Map>(m_insertion);
+        }
+
+        CellMap cells;
+        for (auto&& [column_name, expr] : expressions) {
+            if (expr->is_record_depends()) {
+                throw CommandException("not constant expression in insert");
+            }
+            cells[column_name] = expr->evaluate(db.m_tables.at(m_table_name), {});
         }
 
         check_types(db, cells);
 
-        db.m_tables[m_table_name]->create_record(cells);
+        auto insert_it = db.m_tables[m_table_name]->create_record(cells);
 
-        size_t row_index = db.m_tables[m_table_name]->get_all_records().size() - 1;
         std::vector<std::string> columns_names;
 
         for (auto&& [column_name, column] :
@@ -41,30 +52,27 @@ class InsertCommand : public Command {
         }
 
         return Response{ { ThinnedTable{ db.m_tables[m_table_name],
-                                         { row_index },
+                                         { insert_it },
                                          columns_names } },
                          1 };
     }
 
-  private:
-    InsertionType m_insertion;
-    std::string m_table_name;
-
+  protected:
     Map construct_map_from_vector(const DataBase& db) {
 
-        Map cells;
+        Map expressions;
         auto insertion = std::get<Vector>(m_insertion);
         auto header    = db.m_tables.at(m_table_name)->get_header();
 
         for (auto&& [column_name, column] : header.columns) {
             if (column.index < insertion.size()) {
-                cells[column_name] = insertion[column.index];
+                expressions[column_name] = insertion[column.index];
             }
         }
-        return cells;
+        return expressions;
     }
 
-    void check_types(const DataBase& db, const Map& cells) {
+    void check_types(const DataBase& db, const CellMap& cells) {
         auto table_columns = db.m_tables.at(m_table_name)->get_header().columns;
         for (auto&& [column_name, cell] : cells) {
             if (!table_columns.contains(column_name)) {
@@ -109,5 +117,9 @@ class InsertCommand : public Command {
             }
         }
     }
+
+  protected:
+    InsertionType m_insertion;
+    std::string m_table_name;
 };
 } // namespace memesql

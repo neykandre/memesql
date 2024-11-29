@@ -1,4 +1,5 @@
 #include "Parser/Parser.hpp"
+#include "Command/UpdateCommand.hpp"
 #include "Definitions.hpp"
 #include "Exceptions.hpp"
 #include "Expression/BinaryOpExpr.hpp"
@@ -21,7 +22,6 @@
     Token::Type::NUMBER_LITERAL, Token::Type::STRING_LITERAL,                       \
         Token::Type::BYTES_LITERAL, Token::Type::TRUE, Token::Type::FALSE,          \
         Token::Type::NULL_LITERAL
-
 #define CommandTokens                                                               \
     Token::Type::SELECT, Token::Type::INSERT, Token::Type::DELETE,                  \
         Token::Type::UPDATE, Token::Type::DROP, Token::Type::CREATE
@@ -33,27 +33,31 @@
     Token::Type::KEY, Token::Type::UNIQUE, Token::Type::AUTOINCREMENT,              \
         Token::Type::NOT_NULL
 
+#define KeywordTokens                                                               \
+    Token::Type::TABLE, Token::Type::TO, Token::Type::SET, Token::Type::WHERE,      \
+        Token::Type::FROM, AttributeTokens
+
+#define PunctTokens                                                                 \
+    Token::Type::NOT, Token::Type::COMMA, Token::Type::DOT, Token::Type::COLON,     \
+        Token::Type::SEMICOLON, Token::Type::LEFT_PARENTHESIS,                      \
+        Token::Type::RIGHT_PARENTHESIS, Token::Type::LEFT_BRACKET,                  \
+        Token::Type::RIGHT_BRACKET, Token::Type::LEFT_BRACE,                        \
+        Token::Type::RIGHT_BRACE, Token::Type::VLINE, Token::Type::END_OF_FILE
+
+#define AllTokens                                                                   \
+    OperatorTokens, LiteralTokens, CommandTokens, DatatypeTokens, KeywordTokens,    \
+        PunctTokens
+
 namespace memesql {
 
 const std::unordered_map<Token::Type, int> Parser::m_precedence = {
-    { Token::Type::RIGHT_PARENTHESIS, -1 },
-    { Token::Type::VLINE, -1 },
-    { Token::Type::END_OF_FILE, -1 },
-    { Token::Type::SEMICOLON, -1 },
-    { Token::Type::OR, 10 },
-    { Token::Type::AND, 20 },
-    { Token::Type::NOT, 30 },
-    { Token::Type::XOR, 40 },
-    { Token::Type::EQUAL, 50 },
-    { Token::Type::NOT_EQUAL, 50 },
-    { Token::Type::LESS, 60 },
-    { Token::Type::LESS_EQUAL, 60 },
-    { Token::Type::GREATER, 60 },
-    { Token::Type::GREATER_EQUAL, 60 },
-    { Token::Type::PLUS, 70 },
-    { Token::Type::MINUS, 70 },
-    { Token::Type::MUL, 80 },
-    { Token::Type::DIV, 80 },
+    { Token::Type::OR, 10 },      { Token::Type::AND, 20 },
+    { Token::Type::NOT, 30 },     { Token::Type::XOR, 40 },
+    { Token::Type::EQUAL, 50 },   { Token::Type::NOT_EQUAL, 50 },
+    { Token::Type::LESS, 60 },    { Token::Type::LESS_EQUAL, 60 },
+    { Token::Type::GREATER, 60 }, { Token::Type::GREATER_EQUAL, 60 },
+    { Token::Type::PLUS, 70 },    { Token::Type::MINUS, 70 },
+    { Token::Type::MUL, 80 },     { Token::Type::DIV, 80 },
     { Token::Type::MOD, 80 }
 };
 
@@ -77,10 +81,10 @@ std::shared_ptr<Command> Parser::parse(const std::string& query) {
         return parse_select();
     case Token::Type::INSERT:
         return parse_insert();
-    // case Token::Type::UPDATE:
-    //     return parse_update();
-    // case Token::Type::DELETE:
-    //     return parse_delete();
+    case Token::Type::UPDATE:
+        return parse_update();
+    case Token::Type::DELETE:
+        return parse_delete();
     // case Token::Type::DROP:
     //     return parse_drop();
     default:
@@ -105,6 +109,7 @@ std::shared_ptr<InsertCommand> Parser::parse_insert() {
         insertion = parse_vector();
     }
 
+    m_expector->expect(Token::Type::RIGHT_PARENTHESIS);
     m_expector->expect(Token::Type::TO);
     token                  = m_expector->expect(Token::Type::IDENTIFIER);
     std::string table_name = token.get_value<std::string>();
@@ -116,21 +121,24 @@ std::shared_ptr<InsertCommand> Parser::parse_insert() {
 InsertCommand::Map Parser::parse_map() {
     InsertCommand::Map map;
 
-    Token token = m_expector->peek_expect(Token::Type::IDENTIFIER);
+    Token token;
 
-    while (token.get_type() != Token::Type::RIGHT_PARENTHESIS) {
+    while (true) {
         token = m_expector->expect(Token::Type::IDENTIFIER);
 
         std::string column_name = token.get_value<std::string>();
 
         m_expector->expect(Token::Type::EQUAL);
 
-        token = m_expector->expect(LiteralTokens);
+        map[column_name] = parse_expression();
 
-        map[column_name] = token.get_cell();
-
-        token =
-            m_expector->expect(Token::Type::COMMA, Token::Type::RIGHT_PARENTHESIS);
+        token = m_expector->peek_expect(
+            Token::Type::COMMA, Token::Type::RIGHT_PARENTHESIS, Token::Type::WHERE);
+        if (token.get_type() == Token::Type::COMMA) {
+            m_expector->expect(Token::Type::COMMA);
+        } else {
+            break;
+        }
     }
 
     return map;
@@ -143,18 +151,20 @@ InsertCommand::Vector Parser::parse_vector() {
                                           Token::Type::RIGHT_PARENTHESIS);
 
     while (token.get_type() != Token::Type::RIGHT_PARENTHESIS) {
-        token = m_expector->expect(Token::Type::COMMA, LiteralTokens,
-                                   Token::Type::RIGHT_PARENTHESIS);
+        token = m_expector->peek_expect(Token::Type::COMMA, LiteralTokens);
 
         if (token.get_type() == Token::Type::COMMA) {
-            vector.push_back(Cell{});
+            m_expector->expect(Token::Type::COMMA);
+            vector.push_back(std::make_shared<ConstantExpr>());
             continue;
-        } else {
-            vector.push_back(token.get_cell());
         }
 
-        token =
-            m_expector->expect(Token::Type::COMMA, Token::Type::RIGHT_PARENTHESIS);
+        vector.push_back(parse_expression());
+        token = m_expector->peek_expect(Token::Type::COMMA,
+                                        Token::Type::RIGHT_PARENTHESIS);
+        if (token.get_type() == Token::Type::COMMA) {
+            m_expector->expect(Token::Type::COMMA);
+        }
     }
 
     return vector;
@@ -309,6 +319,7 @@ std::shared_ptr<SelectCommand> Parser::parse_select() {
     std::shared_ptr<Expression> expr;
     if (token.get_type() == Token::Type::WHERE) {
         expr = parse_expression();
+        m_expector->expect(Token::Type::END_OF_FILE, Token::Type::SEMICOLON);
     } else {
         expr = std::make_shared<ConstantExpr>(true);
     }
@@ -316,20 +327,28 @@ std::shared_ptr<SelectCommand> Parser::parse_select() {
 }
 
 SelectCommand::Column Parser::parse_column() {
-    Token token = m_expector->expect(Token::Type::IDENTIFIER);
+    Token token = m_expector->expect(Token::Type::IDENTIFIER, Token::Type::MUL);
 
     std::string first_field, second_field;
 
-    first_field = token.get_value<std::string>();
+    if (token.get_type() == Token::Type::IDENTIFIER) {
+        first_field = token.get_value<std::string>();
+    } else {
+        first_field = "*";
+    }
 
     token = m_expector->peek_expect(Token::Type::DOT, Token::Type::COMMA,
                                     Token::Type::FROM);
 
     if (token.get_type() == Token::Type::DOT) {
         m_expector->expect(Token::Type::DOT);
-        token = m_expector->expect(Token::Type::IDENTIFIER);
+        token = m_expector->expect(Token::Type::IDENTIFIER, Token::Type::MUL);
 
-        second_field = token.get_value<std::string>();
+        if (token.get_type() == Token::Type::IDENTIFIER) {
+            second_field = token.get_value<std::string>();
+        } else {
+            second_field = "*";
+        }
     } else {
         second_field = first_field;
         first_field.clear();
@@ -385,11 +404,9 @@ std::shared_ptr<Expression> Parser::parse_primary() {
 std::shared_ptr<Expression> Parser::parse_binop_right(
     int prev_prec, std::shared_ptr<Expression> left) {
     while (1) {
-        Token check_next = m_expector->peek_expect(
-            OperatorTokens, Token::Type::END_OF_FILE, Token::Type::SEMICOLON,
-            Token::Type::RIGHT_PARENTHESIS, Token::Type::VLINE);
+        Token check_next = m_expector->peek_expect(AllTokens);
 
-        int cur_prec = m_precedence.at(check_next.get_type());
+        int cur_prec = get_precedence(check_next.get_type());
 
         if (cur_prec < prev_prec) {
             return left;
@@ -399,10 +416,8 @@ std::shared_ptr<Expression> Parser::parse_binop_right(
 
         auto right = parse_primary();
 
-        check_next = m_expector->peek_expect(
-            OperatorTokens, Token::Type::END_OF_FILE, Token::Type::SEMICOLON,
-            Token::Type::RIGHT_PARENTHESIS, Token::Type::VLINE);
-        int next_prec = m_precedence.at(check_next.get_type());
+        check_next    = m_expector->peek_expect(AllTokens);
+        int next_prec = get_precedence(check_next.get_type());
 
         if (cur_prec < next_prec) {
             right = parse_binop_right(prev_prec + 1, right);
@@ -413,11 +428,45 @@ std::shared_ptr<Expression> Parser::parse_binop_right(
     }
 }
 
+int Parser::get_precedence(Token::Type type) const {
+    if (m_precedence.contains(type)) {
+        return m_precedence.at(type);
+    }
+    return -1;
+}
+
 std::shared_ptr<Expression> Parser::parse_expression() {
     auto left = parse_primary();
 
     auto ret = parse_binop_right(0, left);
     return ret;
+}
+
+std::shared_ptr<DeleteCommand> Parser::parse_delete() {
+    Token token            = m_expector->expect(Token::Type::IDENTIFIER);
+    std::string table_name = token.get_value<std::string>();
+
+    m_expector->expect(Token::Type::WHERE);
+    std::shared_ptr<Expression> expr = parse_expression();
+
+    m_expector->expect(Token::Type::END_OF_FILE, Token::Type::SEMICOLON);
+
+    return std::make_shared<DeleteCommand>(table_name, expr);
+}
+
+std::shared_ptr<UpdateCommand> Parser::parse_update() {
+    Token token            = m_expector->expect(Token::Type::IDENTIFIER);
+    std::string table_name = token.get_value<std::string>();
+
+    m_expector->expect(Token::Type::SET);
+    InsertCommand::Map update_map = parse_map();
+
+    m_expector->expect(Token::Type::WHERE);
+    auto&& condition = parse_expression();
+
+    m_expector->expect(Token::Type::END_OF_FILE, Token::Type::SEMICOLON);
+
+    return std::make_shared<UpdateCommand>(update_map, table_name, condition);
 }
 
 } // namespace memesql

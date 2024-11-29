@@ -48,13 +48,13 @@ TOKEN(KEYWORDS_START)
 
 MAP(TABLE, "table")
 MAP(TO, "to")
+MAP(SET, "set")
 MAP(UNIQUE, "unique")
 MAP(AUTOINCREMENT, "autoincrement")
 MAP(KEY, "key")
 MAP(NOT_NULL, "not_null")
 MAP(WHERE, "where")
 MAP(FROM, "from")
-MAP(IS, "is")
 
 #ifdef START_END
 TOKEN(KEYWORDS_END)
