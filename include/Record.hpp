@@ -3,7 +3,7 @@
 #include "Cell.hpp"
 #include <vector>
 
-namespace memesql {
+namespace memesql::internal {
 
 class Record {
   public:

@@ -7,7 +7,6 @@
 #include "Command/DeleteCommand.hpp"
 #include "Command/UpdateCommand.hpp"
 #include "Definitions.hpp"
-#include "Exceptions.hpp"
 #include "Expression/Expression.hpp"
 #include "Lexer.hpp"
 #include "Parser/Expector.hpp"
@@ -16,7 +15,7 @@
 #include <memory>
 #include <string>
 
-namespace memesql {
+namespace memesql::internal {
 class Parser {
   public:
     std::shared_ptr<Command> parse(const std::string& query);

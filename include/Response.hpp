@@ -17,7 +17,7 @@ class Response {
 
   public:
     Response() = default;
-    explicit Response(std::vector<ThinnedTable> tables, size_t records_count);
+    explicit Response(std::vector<internal::ThinnedTable> tables, size_t records_count);
 
     ResponseIterator begin() const;
     ResponseIterator end() const;
@@ -36,7 +36,7 @@ class Response {
     // }
 
   private:
-    std::vector<ThinnedTable> m_tables;
+    std::vector<internal::ThinnedTable> m_tables;
     size_t m_records_count;
 };
 

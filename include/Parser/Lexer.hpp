@@ -3,7 +3,7 @@
 #include "Token.hpp"
 #include <unordered_map>
 
-namespace memesql {
+namespace memesql::internal {
 class Lexer {
   public:
     explicit Lexer(const std::string& input);

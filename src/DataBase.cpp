@@ -4,7 +4,7 @@
 
 namespace memesql {
 Response DataBase::execute(const std::string& query) {  
-    Parser parser;
+    internal::Parser parser;
     auto command = parser.parse(query);
     return command->execute(*this);
 }

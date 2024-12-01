@@ -22,6 +22,7 @@
     Token::Type::NUMBER_LITERAL, Token::Type::STRING_LITERAL,                       \
         Token::Type::BYTES_LITERAL, Token::Type::TRUE, Token::Type::FALSE,          \
         Token::Type::NULL_LITERAL
+
 #define CommandTokens                                                               \
     Token::Type::SELECT, Token::Type::INSERT, Token::Type::DELETE,                  \
         Token::Type::UPDATE, Token::Type::DROP, Token::Type::CREATE
@@ -48,7 +49,7 @@
     OperatorTokens, LiteralTokens, CommandTokens, DatatypeTokens, KeywordTokens,    \
         PunctTokens
 
-namespace memesql {
+namespace memesql::internal {
 
 const std::unordered_map<Token::Type, int> Parser::m_precedence = {
     { Token::Type::OR, 10 },      { Token::Type::AND, 20 },

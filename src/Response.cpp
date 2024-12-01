@@ -2,7 +2,7 @@
 
 namespace memesql {
 
-Response::Response(std::vector<ThinnedTable> tables, size_t records_count)
+Response::Response(std::vector<internal::ThinnedTable> tables, size_t records_count)
     : m_tables(tables),
       m_records_count(records_count) {
 }

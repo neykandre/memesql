@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Checker.hpp"
 #include "Command.hpp"
 #include "Definitions.hpp"
 #include "Exceptions.hpp"
@@ -7,7 +8,7 @@
 #include <memory>
 #include <unordered_map>
 
-namespace memesql {
+namespace memesql::internal {
 class InsertCommand : public Command {
 
   public:
@@ -21,9 +22,8 @@ class InsertCommand : public Command {
     }
 
     Response execute(DataBase& db) override {
-        if (!db.m_tables.contains(m_table_name)) {
-            throw CommandException("Table does not exist");
-        }
+        Checker::check_table_exists({ db.m_tables, m_table_name });
+        auto&& table = db.m_tables.at(m_table_name);
 
         Map expressions;
         if (std::holds_alternative<Vector>(m_insertion)) {
@@ -34,26 +34,28 @@ class InsertCommand : public Command {
 
         CellMap cells;
         for (auto&& [column_name, expr] : expressions) {
-            if (expr->is_record_depends()) {
-                throw CommandException("not constant expression in insert");
-            }
-            cells[column_name] = expr->evaluate(db.m_tables.at(m_table_name), {});
+            Checker::check_is_const(expr);
+            cells[column_name] = expr->evaluate(table, {});
         }
 
-        check_types(db, cells);
+        Checker::check_types({ table, cells });
 
-        auto insert_it = db.m_tables[m_table_name]->create_record(cells);
+        std::vector<Cell> record_cells = Checker::autocomplete_record_map(
+            { cells, table->get_header(), table->get_all_records() });
 
         std::vector<std::string> columns_names;
-
-        for (auto&& [column_name, column] :
-             db.m_tables[m_table_name]->get_header().columns) {
+        for (auto&& [column_name, column] : table->get_header().columns) {
+            auto&& cell = record_cells.at(column.index);
+            Checker::check_duplicate({ table->get_all_records().begin(),
+                                       table->get_all_records().end(), column.index,
+                                       column.attributes, cell });
+            record_cells[column.index] = cell;
             columns_names.push_back(column_name);
         }
 
-        return Response{ { ThinnedTable{ db.m_tables[m_table_name],
-                                         { insert_it },
-                                         columns_names } },
+        auto insert_it = table->add_record(record_cells);
+
+        return Response{ { ThinnedTable{ table, { insert_it }, columns_names } },
                          1 };
     }
 
@@ -72,54 +74,8 @@ class InsertCommand : public Command {
         return expressions;
     }
 
-    void check_types(const DataBase& db, const CellMap& cells) {
-        auto table_columns = db.m_tables.at(m_table_name)->get_header().columns;
-        for (auto&& [column_name, cell] : cells) {
-            if (!table_columns.contains(column_name)) {
-                throw CommandException("Unknown column name '" + column_name + "'");
-            }
-
-            ColumnFields::DataTypes column_type = table_columns.at(column_name).type;
-            switch (column_type) {
-            case ColumnFields::DataTypes::INT:
-                if (!std::holds_alternative<Int>(cell.get_variant()) &&
-                    !std::holds_alternative<Null>(cell.get_variant())) {
-                    throw CommandException("Type mismatch: column " + column_name +
-                                           " has type 'int32', but got value " +
-                                           cell.to_string());
-                }
-                break;
-            case ColumnFields::DataTypes::STRING:
-                if (!std::holds_alternative<String>(cell.get_variant()) &&
-                    !std::holds_alternative<Null>(cell.get_variant())) {
-                    throw CommandException("Type mismatch: column " + column_name +
-                                           " has type 'string', but got value " +
-                                           cell.to_string());
-                }
-                break;
-            case ColumnFields::DataTypes::BOOL:
-                if (!std::holds_alternative<Bool>(cell.get_variant()) &&
-                    !std::holds_alternative<Null>(cell.get_variant())) {
-                    throw CommandException("Type mismatch: column " + column_name +
-                                           " has type 'bool', but got value " +
-                                           cell.to_string());
-                }
-                break;
-            case ColumnFields::DataTypes::BYTES:
-                if (!std::holds_alternative<Bytes>(cell.get_variant()) &&
-                    !std::holds_alternative<Null>(cell.get_variant())) {
-                    throw CommandException("Type mismatch: column " + column_name +
-                                           " has type 'bytes', but got value " +
-                                           cell.to_string());
-                }
-            default:
-                break;
-            }
-        }
-    }
-
   protected:
     InsertionType m_insertion;
     std::string m_table_name;
 };
-} // namespace memesql
+} // namespace memesql::internal

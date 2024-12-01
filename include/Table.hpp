@@ -3,12 +3,12 @@
 #include "Cell.hpp"
 #include "Definitions.hpp"
 #include "Record.hpp"
-#include <unordered_map>
+#include <list>
 #include <memory>
 #include <optional>
-#include <list>
+#include <unordered_map>
 
-namespace memesql {
+namespace memesql::internal {
 
 class Table {
   public:
@@ -35,13 +35,16 @@ class Table {
 
     const RecordList& get_all_records() const;
 
-    RecordList::const_iterator create_record(std::unordered_map<std::string, Cell> cells);
+    RecordList::const_iterator add_record(
+        std::vector<Cell> cells);
     RecordList::const_iterator delete_record(RecordList::const_iterator);
-    RecordList::const_iterator update_record(RecordList::const_iterator, std::unordered_map<std::string, Cell> update_cells);
+    RecordList::const_iterator update_record(
+        RecordList::const_iterator,
+        std::unordered_map<std::string, Cell> update_cells);
 
   private:
     Header m_header;
     RecordList m_records;
 };
 
-} // namespace memesql
+} // namespace memesql::internal

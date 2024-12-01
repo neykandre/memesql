@@ -2,7 +2,7 @@
 #include "Exceptions.hpp"
 #include <cstddef>
 
-namespace memesql {
+namespace memesql::internal {
 
 Record::Record(std::vector<Cell> cells)
     : m_cells(cells) {

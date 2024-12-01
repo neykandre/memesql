@@ -3,8 +3,9 @@
 #include "DataBase.hpp"
 #include "Exceptions.hpp"
 #include "Response.hpp"
+#include "Checker.hpp"
 
-namespace memesql {
+namespace memesql::internal {
 class Command {
     friend class Parser;
 

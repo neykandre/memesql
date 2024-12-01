@@ -3,7 +3,7 @@
 #include "../Record.hpp"
 #include "Expression.hpp"
 
-namespace memesql {
+namespace memesql::internal {
 class ColumnExpr : public Expression {
   public:
     explicit ColumnExpr(std::string column_name)

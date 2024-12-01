@@ -3,7 +3,6 @@
 #include "ThinnedTable.hpp"
 #include "WrappedRecord.hpp"
 #include <cstddef>
-#include <memory>
 
 namespace memesql {
 
@@ -13,7 +12,7 @@ class ResponseIterator {
 public:
     using value_type = WrappedRecord;
     using difference_type = std::ptrdiff_t;
-    using ThTableVector = std::vector<ThinnedTable>;
+    using ThTableVector = std::vector<internal::ThinnedTable>;
 
     ResponseIterator() = default;
     ResponseIterator(const ThTableVector*, size_t, size_t) noexcept;

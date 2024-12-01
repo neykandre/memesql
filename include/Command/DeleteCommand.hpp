@@ -5,7 +5,7 @@
 #include "Response.hpp"
 #include "SelectCommand.hpp"
 
-namespace memesql {
+namespace memesql::internal {
 class DeleteCommand : public Command {
   public:
     DeleteCommand(std::string table_name, std::shared_ptr<Expression> expr)
@@ -14,9 +14,7 @@ class DeleteCommand : public Command {
     }
 
     Response execute(DataBase& db) override {
-        if (!db.m_tables.contains(m_table_name)) {
-            throw CommandException("No such table '" + m_table_name + "'");
-        }
+        Checker::check_table_exists({db.m_tables, m_table_name});
 
         auto&& iterators =
             SelectCommand{ { { m_table_name, "*" } }, m_table_name, m_condition }

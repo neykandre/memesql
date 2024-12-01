@@ -2,7 +2,7 @@
 
 #include "Table.hpp"
 
-namespace memesql {
+namespace memesql::internal {
 class ThinnedTable {
   public:
     using TableIterator = Table::RecordList::const_iterator;

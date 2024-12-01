@@ -3,7 +3,7 @@
 #include "../Cell.hpp"
 #include <cstddef>
 
-namespace memesql {
+namespace memesql::internal {
 
 class Token {
   public:

@@ -3,7 +3,7 @@
 #include "Cell.hpp"
 #include "Table.hpp"
 
-namespace memesql {
+namespace memesql::internal {
 
 class Expression {
   public:

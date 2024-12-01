@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cctype>
 
-namespace memesql {
+namespace memesql::internal {
 const std::unordered_map<std::string, Token::Type> Lexer::m_tokens = {
 #define MAPPING
 #include "Parser/TokenEnum.hpp"

@@ -4,7 +4,7 @@
 #include "Table.hpp"
 #include <memory>
 
-namespace memesql {
+namespace memesql::internal {
 class UnaryOpExpression : public Expression {
   public:
     UnaryOpExpression(UnaryOpType op, std::shared_ptr<Expression> expression)

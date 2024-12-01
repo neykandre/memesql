@@ -2,13 +2,11 @@
 
 #include "Command.hpp"
 #include "DataBase.hpp"
-#include "Definitions.hpp"
 #include "Expression/Expression.hpp"
 #include "Response.hpp"
 #include "ThinnedTable.hpp"
-#include <cstddef>
 
-namespace memesql {
+namespace memesql::internal {
 
 class SelectCommand : public Command {
   public:
@@ -24,9 +22,7 @@ class SelectCommand : public Command {
     }
 
     Response execute(DataBase& db) override {
-        if (!db.m_tables.contains(m_table_name)) {
-            throw CommandException("No such table '" + m_table_name + "'");
-        }
+        Checker::check_table_exists({ db.m_tables, m_table_name });
 
         auto&& columns_names = get_columns_names(db);
 
@@ -58,9 +54,14 @@ class SelectCommand : public Command {
         for (auto&& [table_name, column_name] : m_columns) {
             if (table_name == m_table_name) {
                 if (column_name == "*") {
-                    for (auto&& [table_column_name, _] :
+                    size_t start_index = columns_names.size();
+                    columns_names.resize(columns_names.size() +
+                                         table->get_header().columns.size());
+
+                    for (auto&& [table_column_name, column] :
                          table->get_header().columns) {
-                        columns_names.push_back(table_column_name);
+                        columns_names[start_index + column.index] =
+                            table_column_name;
                     }
                 } else {
                     columns_names.push_back(column_name);
@@ -76,4 +77,4 @@ class SelectCommand : public Command {
     std::string m_table_name;
     std::shared_ptr<Expression> m_condition;
 };
-} // namespace memesql
+} // namespace memesql::internal

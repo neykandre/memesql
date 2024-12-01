@@ -39,14 +39,13 @@ int main() {
     }
     std::cout << std::endl;
 
-    auto response = db.execute("select password_hash, is_admin, login, id from "
-                               "users");
+    auto response = db.execute("select\"*");
 
     // response.get<4>();
 
-    for(auto&& [pass, is_admin, login, id] : response.get<4>()) {
-        std::cout << id << " " << login << " " << pass << " " << is_admin << std::endl;
-    }
+    // for(auto&& [pass, is_admin, login, id] : response.get<4>()) {
+    //     std::cout << id << " " << login << " " << pass << " " << is_admin << std::endl;
+    // }
 
     return 0;
 }

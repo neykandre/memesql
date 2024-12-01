@@ -32,6 +32,8 @@ class Bytes {
     size_t size() const;
 };
 
+namespace internal {
+
 namespace ColumnFields {
 
 class Attributes {
@@ -117,5 +119,5 @@ enum class UnaryOpType {
     MINUS,
     LENGTH
 };
-
+} // namespace internal
 } // namespace memesql

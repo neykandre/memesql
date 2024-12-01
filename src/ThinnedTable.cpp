@@ -2,7 +2,7 @@
 
 #include "ThinnedTable.hpp"
 
-namespace memesql {
+namespace memesql::internal {
 ThinnedTable::ThinnedTable(std::shared_ptr<Table> table,
                            std::vector<TableIterator> rows_iterators,
                            std::vector<std::string> columns_names)

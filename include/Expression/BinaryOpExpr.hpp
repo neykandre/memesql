@@ -6,7 +6,7 @@
 #include "Table.hpp"
 #include <memory>
 
-namespace memesql {
+namespace memesql::internal {
 class BinaryOpExpr : public Expression {
 
   public:

@@ -12,8 +12,11 @@ using Cell_value = std::variant<Null, Int, Bool, String, Bytes>;
 
 template <typename T>
 concept Cell_t = std::is_convertible_v<T, Cell_value>;
-    // std::is_same_v<T, Null> || std::is_same_v<T, Int> || std::is_same_v<T, Bool> ||
-    // std::is_same_v<T, Bytes> || std::convertible_to<T, String>;
+
+namespace internal {
+    using memesql::Cell_value;
+    using memesql::Cell_t;
+}
 
 class Cell {
     Cell_value m_value;

@@ -1,7 +1,7 @@
 #include "Parser/Expector.hpp"
 #include "Parser/Token.hpp"
 
-namespace memesql {
+namespace memesql::internal {
 Expector::Expector(std::shared_ptr<Lexer> lexer)
     : m_lexer(lexer) {
 }
@@ -34,10 +34,6 @@ std::string Expector::append_type_name(Token::Type type) {
     } else {
         return std::string{ "unknown token type" };
     }
-}
-
-bool Expector::check_expect(Token token) const {
-    return token.get_type() != Token::Type::NOT_EXPECTED;
 }
 
 } // namespace memesql

@@ -2,7 +2,7 @@
 
 #include "Expression.hpp"
 
-namespace memesql {
+namespace memesql::internal {
 class ConstantExpr : public Expression {
   public:
     ConstantExpr() = default;

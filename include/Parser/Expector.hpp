@@ -2,10 +2,9 @@
 
 #include "Parser/Lexer.hpp"
 #include <cstring>
-#include <functional>
 #include <memory>
 
-namespace memesql {
+namespace memesql::internal {
 class Expector {
   public:
     explicit Expector(std::shared_ptr<Lexer>);
