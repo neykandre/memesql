@@ -27,7 +27,8 @@ class Bytes {
 
     friend std::ostream& operator<<(std::ostream& os, const Bytes& bytes);
 
-    std::strong_ordering operator<=>(const Bytes&) const = default;
+    std::strong_ordering operator<=>(const Bytes&) const;
+    bool operator==(const Bytes&) const;
 
     size_t size() const;
 };

@@ -2,8 +2,10 @@
 
 namespace memesql::internal {
 void Checker::check_table_exists(TableExistsDTO dto) {
-    if (!dto.tables.contains(dto.table_name)) {
-        throw CommandException("No such table '" + dto.table_name + "'");
+    if (dto.is_creating ^ !dto.tables.contains(dto.table_name)) {
+        throw CommandException(
+            dto.is_creating ? ("Table '" + dto.table_name + "' already exists")
+                            : ("No such table '" + dto.table_name + "'"));
     }
 }
 

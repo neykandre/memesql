@@ -14,7 +14,7 @@ class CreateCommand : public Command {
     }
 
     Response execute(DataBase& db) override {
-        Checker::check_table_exists({db.m_tables, m_table_name});
+        Checker::check_table_exists({db.m_tables, m_table_name, true});
 
         Checker::check_header(m_header);
 

@@ -10,6 +10,7 @@
 using namespace memesql;
 
 int main() {
+    std::cout << std::hex;
     // try {
     DataBase db;
     db.execute(
@@ -30,22 +31,27 @@ int main() {
                "password_hash = 0x0000000000000000\n"
                ") to users");
 
-    db.execute("delete users where id = 0");
-
-    std::cout << std::hex;
-    auto response0 = db.execute("update users set login = login + \"_admin\" where (is_admin)");
-    for(auto&& [pass, is_admin, login, id] : response0.get<4>()) {
+    auto response11 = db.execute("select * from users");
+    for(auto&& [id, login, pass, is_admin] : response11.get<4>()) {
         std::cout << id << " " << login << " " << pass << " " << is_admin << std::endl;
     }
     std::cout << std::endl;
 
-    auto response = db.execute("select\"*");
+    db.execute("delete users where id = 0");
+
+    auto response0 = db.execute("update users set login = login + \"_admin\" where (is_admin)");
+    for(auto&& [id, login, pass, is_admin] : response0.get<4>()) {
+        std::cout << id << " " << login << " " << pass << " " << is_admin << std::endl;
+    }
+    // std::cout << std::endl;
+
+    auto response = db.execute("select * from users");
 
     // response.get<4>();
 
-    // for(auto&& [pass, is_admin, login, id] : response.get<4>()) {
-    //     std::cout << id << " " << login << " " << pass << " " << is_admin << std::endl;
-    // }
+    for(auto&& [id, login, pass, _] : response.get<4>()) {
+        std::cout << id << " " << login << " " << pass << " " << std::endl;
+    }
 
     return 0;
 }

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.28)
 project(DBTest)
 
 # Enable testing
@@ -13,11 +13,19 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-# Add test executable
-add_executable(${PROJECT_NAME} SelectTest.cpp)
+enable_testing()
 
-# Link against Google Test
-target_link_libraries(${PROJECT_NAME} gtest_main memesql)
+file(GLOB TESTSOURCES *.cpp)
 
-# Add test
-add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+add_executable(
+        ${PROJECT_NAME}
+        ${TESTSOURCES}
+)
+target_link_libraries(
+        ${PROJECT_NAME}
+        GTest::gtest_main
+        memesql
+)
+
+include(GoogleTest)
+gtest_discover_tests(${PROJECT_NAME})

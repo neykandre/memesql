@@ -113,7 +113,7 @@ Cell Cell::operator||(const Cell& other) const {
 Cell Cell::operator^(const Cell& other) const {
     if (std::holds_alternative<Bool>(m_value) &&
         std::holds_alternative<Bool>(other.m_value)) {
-        return std::get<Bool>(m_value) ^ std::get<Bool>(other.m_value);
+        return std::get<Bool>(m_value) != std::get<Bool>(other.m_value);
     }
     throw ExpressionException("incompatible types", to_string() + " ^^ " + other.to_string(), to_string().size() + 1);
 }

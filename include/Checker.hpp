@@ -17,6 +17,7 @@ class Checker {
     struct TableExistsDTO {
         const DataBase::TableList& tables;
         const std::string& table_name;
+        bool is_creating = false;
     };
 
     struct CheckTypesDTO {

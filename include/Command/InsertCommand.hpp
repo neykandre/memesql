@@ -43,14 +43,19 @@ class InsertCommand : public Command {
         std::vector<Cell> record_cells = Checker::autocomplete_record_map(
             { cells, table->get_header(), table->get_all_records() });
 
-        std::vector<std::string> columns_names;
+        std::vector<std::string> columns_names(table->get_header().columns.size());
         for (auto&& [column_name, column] : table->get_header().columns) {
-            auto&& cell = record_cells.at(column.index);
+            columns_names[column.index] = column_name;
+        }
+
+        for (auto&& [column_name, cell] : cells) {
+            auto&& column = table->get_header().columns.at(column_name);
             Checker::check_duplicate({ table->get_all_records().begin(),
                                        table->get_all_records().end(), column.index,
                                        column.attributes, cell });
-            record_cells[column.index] = cell;
-            columns_names.push_back(column_name);
+            if (!cell.is_null()) {
+                record_cells[column.index] = cell;
+            }
         }
 
         auto insert_it = table->add_record(record_cells);

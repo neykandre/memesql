@@ -39,9 +39,11 @@ class UpdateCommand : public Command {
             }
             Checker::check_types({ table, update_map });
             for (auto&& [column_name, column] : table->get_header().columns) {
-                Checker::check_duplicate({ iterators.front(), iterators.back(),
-                                           column.index, column.attributes,
-                                           update_map.at(column_name) });
+                if (update_map.contains(column_name)) {
+                    Checker::check_duplicate({ iterators.front(), iterators.back(),
+                                               column.index, column.attributes,
+                                               update_map.at(column_name) });
+                }
             }
 
             table->update_record(record_it, update_map);

@@ -23,7 +23,7 @@ class WrappedRecord {
 
     template <Cell_t T>
     const T& get(const std::string& column_name) const {
-        get_cell(column_name).get<T>();
+        return get_cell(column_name).get<T>();
     }
 
 

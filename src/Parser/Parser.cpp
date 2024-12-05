@@ -100,7 +100,8 @@ std::shared_ptr<InsertCommand> Parser::parse_insert() {
     m_expector->expect(Token::Type::LEFT_PARENTHESIS);
 
     Token token = m_expector->peek_expect(Token::Type::COMMA, LiteralTokens,
-                                          Token::Type::IDENTIFIER);
+                                          Token::Type::IDENTIFIER,
+                                          Token::Type::RIGHT_PARENTHESIS);
 
     switch (token.get_type()) {
     case Token::Type::IDENTIFIER:
@@ -206,17 +207,21 @@ Table::Header Parser::parse_header() {
 
         m_expector->expect(Token::Type::COLON);
         token = m_expector->expect(DatatypeTokens);
-        if (token.get_type() == Token::Type::INT) {
+        switch (token.get_type()) {
+        case Token::Type::INT:
             column.type = ColumnFields::DataTypes::INT;
-        }
-        if (token.get_type() == Token::Type::STRING) {
+            break;
+        case Token::Type::STRING:
             column.type = ColumnFields::DataTypes::STRING;
-        }
-        if (token.get_type() == Token::Type::BOOL) {
+            break;
+        case Token::Type::BOOL:
             column.type = ColumnFields::DataTypes::BOOL;
-        }
-        if (token.get_type() == Token::Type::BYTES) {
+            break;
+        case Token::Type::BYTES:
             column.type = ColumnFields::DataTypes::BYTES;
+            break;
+        default:
+            break;
         }
         if (column.type == ColumnFields::DataTypes::BYTES ||
             column.type == ColumnFields::DataTypes::STRING) {
@@ -232,19 +237,23 @@ Table::Header Parser::parse_header() {
         if (token.get_type() == Token::Type::EQUAL) {
             token = m_expector->expect(LiteralTokens);
 
-            if (token.get_type() == Token::Type::NUMBER_LITERAL) {
+            switch (token.get_type()) {
+            case Token::Type::BYTES_LITERAL:
+                column.default_value = token.get_value<Bytes>();
+                break;
+            case Token::Type::NUMBER_LITERAL:
                 column.default_value = token.get_value<int>();
-            }
-            if (token.get_type() == Token::Type::STRING_LITERAL) {
+                break;
+            case Token::Type::STRING_LITERAL:
                 column.default_value = token.get_value<std::string>();
-            }
-            if (token.get_type() == Token::Type::TRUE) {
+                break;
+            case Token::Type::TRUE:
                 column.default_value = true;
-            }
-            if (token.get_type() == Token::Type::FALSE) {
+                break;
+            case Token::Type::FALSE:
                 column.default_value = false;
-            }
-            if (token.get_type() == Token::Type::NULL_LITERAL) {
+                break;
+            default:
                 column.default_value = Null{};
             }
 
@@ -382,9 +391,9 @@ std::shared_ptr<Expression> Parser::parse_value() {
 }
 
 std::shared_ptr<Expression> Parser::parse_primary() {
-    Token token =
-        m_expector->peek_expect(LiteralTokens, Token::Type::LEFT_PARENTHESIS,
-                                Token::Type::VLINE, Token::Type::IDENTIFIER);
+    Token token = m_expector->peek_expect(
+        LiteralTokens, Token::Type::LEFT_PARENTHESIS, Token::Type::VLINE,
+        Token::Type::IDENTIFIER, Token::Type::MINUS, Token::Type::NOT);
 
     switch (token.get_type()) {
     case Token::Type::LEFT_PARENTHESIS:
@@ -470,4 +479,4 @@ std::shared_ptr<UpdateCommand> Parser::parse_update() {
     return std::make_shared<UpdateCommand>(update_map, table_name, condition);
 }
 
-} // namespace memesql
+} // namespace memesql::internal

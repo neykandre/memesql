@@ -77,8 +77,3 @@ TEST(CellTest, CompareMixedTypes) {
     EXPECT_THROW(c1 == c2, ExpressionException);
     EXPECT_THROW(c1 != c2, ExpressionException);
 }
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

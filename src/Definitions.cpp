@@ -18,6 +18,14 @@ Bytes::Bytes(std::string_view sv) {
     }
 }
 
+std::strong_ordering Bytes::operator<=>(const Bytes& other) const {
+    return m_bytes <=> other.m_bytes;
+}
+
+bool Bytes::operator==(const Bytes& other) const {
+    return m_bytes == other.m_bytes;
+}
+
 size_t Bytes::size() const {
     return m_bytes.size();
 }
